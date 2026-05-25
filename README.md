@@ -19,7 +19,7 @@ Oyun iki **temel kural seti** ve iki **isteğe bağlı eklenti** içerir:
 | Kural Seti | Dönem | Açıklama |
 |---|---|---|
 | **Kılıç & Kalkan** | Antik Çağ – Orta Çağ | Sümerlerden Osmanlı'ya, yirmi beş ordu listesi, altı senaryo ve sefer kampanyası |
-| **Top & Tüfek** | 1. Dünya Savaşı – Kurtuluş Savaşı | Modern savaşın acımasız cepheleri: siperler, makineli tüfekler, topçu bataryaları |
+| **Top & Tüfek** | Dünya Savaşları – Kurtuluş Savaşı | Modern savaşın acımasız cepheleri: siperler, makineli tüfekler, topçu bataryaları |
 
 ### Eklentiler
 
@@ -104,7 +104,7 @@ Kılıç & Kalkan kural kitabı aşağıdaki ordu listelerini içerir:
 
 ### Afsundehliz
 
-Sahipkıran evreninin masa başı rol yapma oyunu (RPG). Sahipkıran'ın mekanik iskeletinden doğan, bağımsız ve tam teşekküllü bir RPG deneyimi. Geliştirme sürecini takip etmek için [duyuru listesine abone olun](#).
+Sahipkıran evreninin masa başı rol yapma oyunu (RPG). Sahipkıran'ın mekanik iskeletinden doğan, bağımsız ve tam teşekküllü bir RPG deneyimi. Geliştirme sürecini takip etmek için [duyuru listesine abone olun](https://forms.gle/9i3FdtyxKFngWV997).
 
 ---
 
