@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sahipkıran — Sık Sorulan Sorular</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwindcss.config = {
+      theme: {
+        extend: {
+          colors: {
+            surface: '#ffffff',
+            subtle: '#f6f5f3',
+            muted: '#eae8e4',
+            ink: '#1a1917',
+            inksoft: '#3d3b37',
+            inkfade: '#7a7770',
+            inkghost: '#b0aba3',
+            gold: '#9e7c2b',
+            darkgold: '#7a5f1e',
+            crimson: '#9b2226',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: #ffffff;
+      color: #1a1917;
+      overflow-x: hidden;
+    }
+
+    .font-display { font-family: 'IBM Plex Serif', Georgia, serif !important; }
+    .font-body { font-family: 'Manrope', system-ui, sans-serif !important; }
+
+    /* Nav */
+    .srd-nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid #eae8e4;
+    }
+
+    /* FAQ item */
+    .faq-item {
+      border-bottom: 1px solid #eae8e4;
+      padding: 1.75rem 0;
+    }
+    .faq-item:last-child {
+      border-bottom: none;
+    }
+    .faq-q {
+      font-family: 'IBM Plex Serif', Georgia, serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: #1a1917;
+      margin-bottom: 0.65rem;
+      line-height: 1.5;
+    }
+    .faq-a {
+      font-family: 'Manrope', system-ui, sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: #3d3b37;
+    }
+    .faq-a strong {
+      color: #1a1917;
+      font-weight: 600;
+    }
+    .faq-a a {
+      color: #9e7c2b;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+      text-decoration-color: #9e7c2b44;
+      transition: text-decoration-color 0.2s;
+    }
+    .faq-a a:hover {
+      text-decoration-color: #9e7c2b;
+    }
+
+    /* Placeholder answer */
+    .faq-placeholder {
+      font-family: 'Manrope', system-ui, sans-serif;
+      font-size: 0.875rem;
+      color: #b0aba3;
+      font-style: italic;
+    }
+
+    /* Section heading */
+    .faq-section {
+      font-family: 'IBM Plex Serif', Georgia, serif;
+      font-size: 1.35rem;
+      font-weight: 700;
+      color: #1a1917;
+      margin-top: 3rem;
+      margin-bottom: 0.5rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #eae8e4;
+    }
+    .faq-section:first-of-type {
+      margin-top: 0;
+    }
+
+    .footer-link {
+      color: #7a7770;
+      text-decoration: none;
+      transition: color 0.2s;
+      font-family: 'Manrope', sans-serif;
+    }
+    .footer-link:hover {
+      color: #1a1917;
+    }
+
+    @media print {
+      .srd-nav, .no-print { display: none !important; }
+    }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- NAV -->
+  <nav class="srd-nav">
+    <div class="max-w-3xl mx-auto px-6 py-3 flex items-center justify-between">
+      <a href="index.html" class="font-display text-lg text-ink italic hover:text-inkfade transition-colors">Sahipkıran</a>
+      <div class="flex items-center gap-5">
+        <span class="font-body text-xs tracking-widest uppercase text-inkghost font-bold hidden sm:inline">SSS</span>
+        <a href="index.html" class="font-body text-sm text-inkfade hover:text-ink transition-colors">← Ana Sayfa</a>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- DOCUMENT -->
+  <main class="max-w-3xl mx-auto px-6 py-12 md:py-20">
+
+    <!-- Title block -->
+    <header class="mb-12">
+      <p class="font-body text-xs tracking-[0.25em] uppercase text-gold font-bold mb-3">Yardım & Bilgi</p>
+      <h1 class="font-display text-4xl md:text-5xl text-ink font-bold leading-tight mb-3">Sık Sorulan Sorular</h1>
+      <p class="font-body text-base text-inkfade leading-relaxed max-w-xl">Sahipkıran hakkında merak edilen soruların yanıtları. Aradığınızı bulamadıysanız Discord sunucumuzdan veya GitHub üzerinden bize ulaşabilirsiniz.</p>
+    </header>
+
+
+    <!-- ===================== -->
+    <!-- GENEL -->
+    <!-- ===================== -->
+    <h2 class="faq-section">Genel</h2>
+
+    <div class="faq-item">
+      <p class="faq-q">Sahipkıran nedir?</p>
+      <p class="faq-a">Sahipkıran, minyatür bağımsız bir masaüstü skirmish savaş oyunudur. Oyuncular küçük figürlerden oluşan birlikleri yöneterek taktiksel çatışmalar yaşar. Herhangi bir marka veya ölçekteki figürlerle oynanabilir — hatta kâğıt parçalarıyla bile. İki temel kural seti (<strong>Kılıç & Kalkan</strong> ve <strong>Top & Tüfek</strong>) ile iki isteğe bağlı eklenti (<strong>Afsunküf</strong> ve <strong>Psikonik</strong>) içerir.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">Sahipkıran ücretsiz mi?</p>
+      <p class="faq-a">Evet, tamamen ücretsiz. Tüm kural kitapları, SRD belgeleri ve eklentiler <strong>CC BY-SA 4.0</strong> lisansı altında ücretsiz olarak indirilebilir, paylaşılabilir ve uyarlanabilir. Hiçbir gizli ücret, premium içerik ya da ödeme duvarı yoktur.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">"Minyatür bağımsız" ne anlama geliyor?</p>
+      <p class="faq-a">Sahipkıran belirli bir marka, üretici veya figür hattına bağlı değildir. Elinizde hangi figürler varsa onlarla oynayabilirsiniz: 1:72 plastik askerler, 28mm metal figürler, 3D baskı modeller ve hatta kâğıttan kesilmiş silüetler. Önemli olan figürün ne olduğu değil, profil tablosundaki özellikleridir.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">Kılıç & Kalkan ile Top & Tüfek arasındaki fark nedir?</p>
+      <p class="faq-a"><strong>Kılıç & Kalkan</strong>, Antik Çağ'dan Orta Çağ sonlarına kadar olan dönemi kapsar — kılıçlar, mızraklar, yaylar ve zırhlarla dövüşülen muharebeleri simüle eder. <strong>Top & Tüfek</strong> ise 1. Dünya Savaşı, 2. Dünya Savaşı ve Kurtuluş Savaşı gibi modern çatışmaları kapsar. İkisi aynı çekirdek mekanik üzerine inşa edilmiştir, ancak her biri kendi dönemine özgü silah, zırh ve taktik kurallarını taşır.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">Eklentiler (Afsunküf, Psikonik) nasıl çalışıyor?</p>
+      <p class="faq-a">Eklentiler, temel kural setlerinin üzerine bağımsız olarak eklenen modüler kitapçıklardır. <strong>Afsunküf</strong> fantastik unsurlar (büyü, canavarlar, efsunlu silahlar) eklerken, <strong>Psikonik</strong> bilimkurgu unsurları (enerji silahları, psiyonik güçler, araçlar) getirir. Birini, ikisini veya hiçbirini kullanabilirsiniz — herhangi bir temel kural setiyle birleştirilebilirler.</p>
+    </div>
+
+
+    <!-- ===================== -->
+    <!-- BAŞLARKEN -->
+    <!-- ===================== -->
+    <h2 class="faq-section">Başlarken</h2>
+
+    <div class="faq-item">
+      <p class="faq-q">Oynamak için neler gerekiyor?</p>
+      <p class="faq-a">İhtiyacınız olan her şey oldukça basit: kural kitapçığı (ücretsiz indirin), bir mezura veya cetvel, birkaç altılık zar (z6), figürler (herhangi bir marka veya malzeme olabilir) ve düz bir yüzey. Araziyi temsil etmek için kitap, kutu, taş gibi ev eşyaları kullanabilirsiniz. Önerilen masa boyutu yaklaşık <strong>60×90 cm</strong>'dir.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">Hangi ölçek öneriliyor?</p>
+      <p class="faq-a">Sahipkıran her ölçekte oynanabilir. Ancak <strong>1:72 ölçek</strong> (yaklaşık 2 cm boyunda figürler), hem fiyat hem erişilebilirlik açısından özellikle yeni başlayanlar için önerilir. Bu ölçekle küçük bir masada bile savaşlar oynanabilir. 28mm figürler daha ayrıntılıdır ancak daha fazla alan gerektirir.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">Kaç figürle başlamalıyım?</p>
+      <p class="faq-a">Standart bir oyun her oyuncunun <strong>100 puanlık</strong> bir kuvvetle katıldığı çatışmaları kapsar. Bu, yaklaşık <strong>5–10 figüre</strong> denk gelir ve 45–60 dakika sürer. İlk oyunlarınız için bu ölçeği öneriyoruz. Daha hızlı oyunlar için 75 puan, daha büyük çarpışmalar için 150 puan kullanılabilir.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">İlk oyunumda hangi senaryoyu oynamalıyım?</p>
+      <p class="faq-a">Kural kitabında yer alan <strong>Sahil Akını</strong> senaryosu, yeni başlayanlar için tasarlanmış bir giriş senaryosudur. Viking ve Sakson güçleriyle oynanan bu senaryo, temel mekanikleri öğretirken heyecanlı bir çatışma sunar. Alternatif olarak, senaryo tablosundan zar atarak rastgele bir senaryo da belirleyebilirsiniz.</p>
+    </div>
+
+
+    <!-- ===================== -->
+    <!-- KURALLAR -->
+    <!-- ===================== -->
+    <h2 class="faq-section">Kurallar</h2>
+
+    <div class="faq-item">
+      <p class="faq-q">Puan sistemi nasıl çalışıyor?</p>
+      <p class="faq-a">Her figürün bir puan değeri vardır. Temel insan profili 5 puan değerindedir ve referans olarak kullanılır. Özelliklerdeki her artış veya azalış, belirli bir puan miktarı ekler veya çıkarır. Silahlar, zırhlar ve özel beceriler (etiketler) de puana dahil edilir. Böylece farklı marka ve türdeki figürler eşit şartlarda karşılaşabilir.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">Kendi birimlerimi oluşturabilir miyim?</p>
+      <p class="faq-a">Evet. Puan sistemi tam da bunun için tasarlandı. Elinizdeki figüre bakıp, temel profil üzerinden özelliklerini ayarlayarak ve silah, zırh, etiket ekleyerek kendi birimlerinizi oluşturabilirsiniz. Ordu listelerindeki hazır profiller rehber niteliğindedir — zorunlu değildir.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">Sefer (campaign) kuralları var mı?</p>
+      <p class="faq-a">Evet. Birbiri ardına oynanan ve sonuçları birbirini etkileyen bir dizi savaşa <strong>sefer</strong> denir. Savaş sonunda figürlerin hayatta kalıp kalmadığı belirlenir, deneyim ve ganimet kazanılır, yeni figürler askere alınabilir ve mevcut figürlere beceriler kazandırılabilir.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">SRD (Sistem Referans Belgesi) tam kural kitabının yerini tutar mı?</p>
+      <p class="faq-a"><a href="srd.html">SRD</a>, çekirdek mekaniklerin özetini sunar ve oyun sırasında hızlı başvuru için idealdir. Ancak ordu listeleri, senaryolar, sefer kuralları, silah/zırh tabloları ve ek kurallar için tam kural kitabını indirmenizi öneriyoruz.</p>
+    </div>
+
+
+    <!-- ===================== -->
+    <!-- TOPLULUK & KATKI -->
+    <!-- ===================== -->
+    <h2 class="faq-section">Topluluk & Katkı</h2>
+
+    <div class="faq-item">
+      <p class="faq-q">Kurallarda bir hata buldum, nereye bildirmeliyim?</p>
+      <p class="faq-a">Bir eposta göndererek hata bildiriminde bulunabilirsiniz. Hatanın hangi kural kitabında, hangi sayfada ve hangi bağlamda oluştuğunu belirtirseniz düzeltme süreci hızlanır. Her bildirim değerlidir — topluluk katkıları Sahipkıran'ı daha iyi bir oyun yapar.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">Kendi ordu listemi veya senaryomu paylaşabilir miyim?</p>
+      <p class="faq-a">Kesinlikle. Sahipkıran, CC BY-SA 4.0 lisansı altında yayınlandığı için kendi ordu listelerinizi, senaryolarınızı ve ev kurallarınızı serbestçe oluşturup paylaşabilirsiniz. GitHub deposunda topluluk içerikleri için ayrılmış alan oluşturulacaktır. Tek koşul, türetilmiş içeriğinizi aynı lisans altında paylaşmanız ve Sahipkıran'a atıfta bulunmanızdır.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">Sahipkıran'ı kendi dilime çevirebilir miyim?</p>
+      <p class="faq-a">Evet, çeviriler teşvik edilmektedir. CC BY-SA 4.0 lisansı, içeriğin herhangi bir dile çevrilmesine ve aynı lisans altında dağıtılmasına izin verir. Çevirinizi tamamladığınızda GitHub deposuna katkı olarak sunabilir ya da kendi platformunuzda yayınlayabilirsiniz. Orijinal Türkçe metne atıfta bulunmanız yeterlidir. Not: Sahipkıran İngilizce olarak da yayımlanmıştır.</p>
+      <p class="faq-a">Evet, çeviriler teşvik edilmektedir. CC BY-SA 4.0 lisansı, içeriğin herhangi bir dile çevrilmesine ve aynı lisans altında dağıtılmasına izin verir. Çevirinizi tamamladığınızda GitHub deposuna katkı olarak sunabilir ya da kendi platformunuzda yayınlayabilirsiniz. Orijinal Türkçe metne atıfta bulunmanız yeterlidir. Sahipkıran halihazırda <a href="https://hexhunt.itch.io/sahipkiran2">İngilizce</a> olarak da yayımlanmıştır.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">Turnuva düzenlemek istiyorum, resmi kurallar var mı?</p>
+      <p class="faq-a">Kural kitabında turnuva (yarışma odaklı) oyun biçimi için temel kılavuzlar bulunmaktadır. Oyuncular önceden anlaşılan bir puan üst sınırı belirler ve ordularını buna göre kurar. Her 100 puan için mutlaka 1 komuta birimi, en fazla 1 seçkin birim ve en fazla 1 özel/destek birimi bulunmalıdır; kalan puanlar erat birimlere harcanır. Turnuva organizatörleri bu çerçeveyi kendi etkinliklerine göre uyarlayabilir.</p>
+    </div>
+
+
+    <!-- ===================== -->
+    <!-- AFSUNKÜF & PSİKONİK -->
+    <!-- ===================== -->
+    <h2 class="faq-section">Afsunküf & Psikonik</h2>
+
+    <div class="faq-item">
+      <p class="faq-q">Afsunküf'teki büyü sistemi nasıl işliyor?</p>
+      <p class="faq-a">Afsunküf, Sahipkıran'ın temel mekaniklerinin üzerine bir büyü katmanı ekler. Büyücü figürler tılsım örebilir, lanetler savurabilir ve efsunlu silahlar kuşanabilir. Eklenti ayrıca canavar profilleri sunar — devler, ölümsüzler ve efsanevi yaratıklar gibi figürleri puan sistemiyle dengelenen profillerle sahaya sürebilirsiniz. Detaylı kurallar için Afsunküf eklenti kitapçığını indirin.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">Psikonik'teki silah kuralları temel kurallarla uyumlu mu?</p>
+      <p class="faq-a">Evet. Psikonik'teki silah kuralları, temel hareket, atış ve yaralama mekaniklerini genişleterek yeni zırhları, ileri teknoloji silahları ve ağır silah platformlarını oyuna dahil eder. Bu bilim kurgu silahları kendi özelliklerine sahiptir ancak aynı zar sistemini ve yaralama tablosunu kullanır. Top & Tüfek ile birleştirildiğinde modern savaş senaryolarına, Kılıç & Kalkan ile birleştirildiğinde ise alternatif tarih bilimkurgu oyunlarına kapı açar.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">Her iki eklentiyi aynı anda kullanabilir miyim?</p>
+      <p class="faq-a">Evet. Afsunküf ve Psikonik birbirinden bağımsız modüllerdir ve aynı oyunda bir arada kullanılabilir. Bu kombinasyon, büyü ve teknolojinin iç içe geçtiği senaryolar yaratmanıza olanak tanır — örneğin psiyonik güçlere sahip bir büyücü birlik, plazma silahları taşıyan bir canavar ya da efsunlu zırh giyen bir bilimkurgu komutanı. Puan sistemi tüm unsurları dengeler.</p>
+    </div>
+
+
+    <!-- ===================== -->
+    <!-- AFSUNDEHLİZ -->
+    <!-- ===================== -->
+    <h2 class="faq-section">Afsundehliz</h2>
+
+    <div class="faq-item">
+      <p class="faq-q">Afsundehliz nedir?</p>
+      <p class="faq-a">Afsundehliz, Sahipkıran evreninin masa başı rol yapma oyunudur (RPG). Savaş alanının ötesine geçerek oyuncuların kendi karakterlerini yaratmasına, dehlizlere dalmasına ve hikâyelerini yazmasına olanak tanır. Sahipkıran'ın mekanik iskeletinden doğan, bağımsız ve tam teşekküllü bir RPG deneyimi sunmayı hedefler.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">Afsundehliz ne zaman yayınlanacak?</p>
+      <p class="faq-a">Afsundehliz şu anda aktif geliştirme aşamasındadır ve henüz kesin bir yayın tarihi belirlenmemiştir. Geliştirme sürecini takip etmek, playtest çağrılarından haberdar olmak ve erken erişim fırsatlarını yakalamak için ana sayfadaki duyuru aboneliğini kullanabilirsiniz.</p>
+    </div>
+
+    <div class="faq-item">
+      <p class="faq-q">Afsundehliz, Sahipkıran ile aynı sistemi mi kullanıyor?</p>
+      <p class="faq-a">Afsundehliz, Sahipkıran'ın çekirdek mekaniklerinden (z6 tabanlı çözümleme, profil sistemi, moral mekanikleri) ilham alır ancak bağımsız bir RPG olarak tasarlanmaktadır. Karakter yaratma, beceri ağaçları, keşif ve sosyal etkileşim gibi rol yapma unsurları eklenirken, savaş oyununun taktiksel DNA'sı korunur. Sahipkıran figürlerinizi Afsundehliz oyunlarında da kullanabilirsiniz.</p>
+    </div>
+
+  </main>
+
+
+  <!-- Back to top -->
+  <div class="max-w-3xl mx-auto px-6 pb-8">
+    <div class="pt-8 border-t border-muted text-center">
+      <a href="#" class="font-body text-sm text-inkfade hover:text-ink transition-colors">↑ Başa dön</a>
+    </div>
+  </div>
+
+
+  <!-- FOOTER -->
+  <footer class="border-t border-muted py-10 bg-subtle mt-4">
+    <div class="max-w-3xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="font-body text-xs text-inkghost">© 2026 Sahipkıran. CC BY-SA 4.0</p>
+      <div class="flex items-center gap-5">
+        <a href="index.html" class="footer-link text-xs">Ana Sayfa</a>
+        <a href="srd.html" class="footer-link text-xs">SRD</a>
+        <a href="index.html#caglar" class="footer-link text-xs">Tam Kuralları İndir</a>
+        <a href="https://savasmasasi.github.com/sahipkiran" class="footer-link text-xs">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

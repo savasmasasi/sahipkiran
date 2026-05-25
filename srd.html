@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sahipkıran — Sistem Referans Belgesi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwindcss.config = {
+      theme: {
+        extend: {
+          colors: {
+            surface: '#ffffff',
+            subtle: '#f6f5f3',
+            muted: '#eae8e4',
+            ink: '#1a1917',
+            inksoft: '#3d3b37',
+            inkfade: '#7a7770',
+            inkghost: '#b0aba3',
+            gold: '#9e7c2b',
+            darkgold: '#7a5f1e',
+            crimson: '#9b2226',
+          },
+          fontFamily: {
+            display: ['IBM Plex Serif', 'Georgia', 'serif'],
+            body: ['Manrope', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: #ffffff;
+      color: #1a1917;
+      overflow-x: hidden;
+    }
+
+    .font-display { font-family: 'IBM Plex Serif', Georgia, serif !important; }
+    .font-body { font-family: 'Manrope', system-ui, sans-serif !important; }
+
+    /* Document prose */
+    .prose h2 {
+      font-family: 'IBM Plex Serif', Georgia, serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1a1917;
+      margin-top: 3.5rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.5rem;
+      border-bottom: 1px solid #eae8e4;
+    }
+    .prose h3 {
+      font-family: 'IBM Plex Serif', Georgia, serif;
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: #1a1917;
+      margin-top: 2rem;
+      margin-bottom: 0.75rem;
+    }
+    .prose p {
+      font-family: 'Manrope', system-ui, sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: #3d3b37;
+      margin-bottom: 1rem;
+    }
+    .prose strong {
+      color: #1a1917;
+      font-weight: 600;
+    }
+    .prose ul, .prose ol {
+      font-family: 'Manrope', system-ui, sans-serif;
+      font-size: 0.95rem;
+      line-height: 1.8;
+      color: #3d3b37;
+      margin-bottom: 1rem;
+      padding-left: 1.5rem;
+    }
+    .prose li {
+      margin-bottom: 0.35rem;
+    }
+    .prose table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 1.25rem 0;
+      font-family: 'Manrope', system-ui, sans-serif;
+      font-size: 0.875rem;
+    }
+    .prose th {
+      font-family: 'IBM Plex Serif', Georgia, serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #7a7770;
+      text-align: center;
+      padding: 0.6rem 0.5rem;
+      border-bottom: 2px solid #eae8e4;
+    }
+    .prose th:first-child {
+      text-align: left;
+    }
+    .prose td {
+      text-align: center;
+      padding: 0.5rem;
+      border-bottom: 1px solid #f6f5f3;
+      color: #3d3b37;
+    }
+    .prose td:first-child {
+      text-align: left;
+      font-weight: 500;
+      color: #1a1917;
+    }
+
+    /* Callout / rule block */
+    .rule-block {
+      border-left: 3px solid #9e7c2b;
+      background: #f6f5f3;
+      padding: 1rem 1.25rem;
+      margin: 1.25rem 0;
+      font-family: 'Manrope', system-ui, sans-serif;
+      font-size: 0.9rem;
+      line-height: 1.7;
+      color: #3d3b37;
+    }
+    .rule-block strong {
+      color: #1a1917;
+    }
+
+    /* Phase boxes */
+    .phase-box {
+      display: flex;
+      align-items: flex-start;
+      gap: 1rem;
+      padding: 1rem 0;
+      border-bottom: 1px solid #f6f5f3;
+    }
+    .phase-box:last-child {
+      border-bottom: none;
+    }
+    .phase-num {
+      flex-shrink: 0;
+      width: 2rem;
+      height: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #1a1917;
+      color: #fff;
+      font-family: 'IBM Plex Serif', Georgia, serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      border-radius: 2px;
+    }
+
+    /* TOC */
+    .toc a {
+      color: #7a7770;
+      text-decoration: none;
+      font-family: 'Manrope', system-ui, sans-serif;
+      font-size: 0.875rem;
+      transition: color 0.2s;
+    }
+    .toc a:hover {
+      color: #1a1917;
+    }
+    .toc a::before {
+      content: '— ';
+      color: #eae8e4;
+    }
+
+    /* Nav */
+    .srd-nav {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid #eae8e4;
+    }
+
+    /* Footer link */
+    .footer-link {
+      color: #7a7770;
+      text-decoration: none;
+      transition: color 0.2s;
+      font-family: 'Manrope', sans-serif;
+    }
+    .footer-link:hover {
+      color: #1a1917;
+    }
+
+    @media print {
+      .srd-nav, .no-print { display: none !important; }
+      body { font-size: 11pt; }
+      .prose h2 { margin-top: 2rem; }
+    }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- NAV -->
+  <nav class="srd-nav">
+    <div class="max-w-3xl mx-auto px-6 py-3 flex items-center justify-between">
+      <a href="index.html" class="font-display text-lg text-ink italic hover:text-inkfade transition-colors">Sahipkıran</a>
+      <div class="flex items-center gap-5">
+        <span class="font-body text-xs tracking-widest uppercase text-inkghost font-bold hidden sm:inline">SRD</span>
+        <a href="index.html" class="font-body text-sm text-inkfade hover:text-ink transition-colors">← Ana Sayfa</a>
+      </div>
+    </div>
+  </nav>
+
+
+  <!-- DOCUMENT -->
+  <main class="max-w-3xl mx-auto px-6 py-12 md:py-20">
+
+    <!-- Title block -->
+    <header class="mb-12">
+      <p class="font-body text-xs tracking-[0.25em] uppercase text-gold font-bold mb-3">Sistem Referans Belgesi</p>
+      <h1 class="font-display text-4xl md:text-5xl text-ink font-bold leading-tight mb-3">Sahipkıran</h1>
+      <p class="font-body text-base text-inkfade leading-relaxed max-w-xl">Bu belge, Sahipkıran kural kitabının çekirdek mekaniklerini özetler. Tam kurallar, ordu listeleri ve senaryolar için kural kitaplarını indirin.</p>
+      <div class="flex items-center gap-4 mt-5">
+        <span class="font-body text-xs text-inkghost">CC BY-SA 4.0</span>
+        <span class="text-inkghost">·</span>
+        <a href="#" class="font-body text-xs text-gold hover:text-darkgold font-semibold transition-colors">Tam Kuralları İndir ↓</a>
+      </div>
+    </header>
+
+    <!-- TOC -->
+    <div class="toc border border-muted rounded-sm p-5 mb-12 bg-subtle">
+      <p class="font-display text-sm font-semibold text-ink mb-3">İçindekiler</p>
+      <div class="space-y-1.5">
+        <a href="#ozellikler" class="block">Özellikler</a>
+        <a href="#oyun-duzeni" class="block">Oyun Düzeni</a>
+        <a href="#oncelik" class="block">Öncelik</a>
+        <a href="#hareket" class="block">Hareket</a>
+        <a href="#atis" class="block">Atış</a>
+        <a href="#dovus" class="block">Dövüş</a>
+        <a href="#moral" class="block">Moral</a>
+      </div>
+    </div>
+
+    <!-- CONTENT -->
+    <article class="prose">
+
+      <!-- ÖZELLIKLER -->
+      <h2 id="ozellikler">Özellikler</h2>
+
+      <p>Her bir figür bir dizi özellikle tanımlanır. Bu özellikler figürün savaş alanındaki yeteneklerini belirler.</p>
+
+      <p><strong>HAREKET (HRK):</strong> Figürün normal şartlarda bir turda kaç santimetre ilerleyebileceğini belirtir.</p>
+
+      <p><strong>ATIŞ (ATŞ):</strong> Menzilli silahlarla atış yapma olasılığını gösterir. Değer doğrudan gerekli zar sonucuyla ifade edilir (ör. 3+). Değer düştükçe isabet kolaylaşır.</p>
+
+      <p><strong>DÖVÜŞ (DVŞ):</strong> Göğüs göğse çarpışma becerisini gösterir. Değer yükseldikçe dövüşü kazanma olasılığı artar.</p>
+
+      <p><strong>KUVVET (KUV):</strong> Fiziksel gücü ve dövüşteki etkiyi gösterir. Yükseldikçe zarar verme olasılığı artar.</p>
+
+      <p><strong>DAYANIM (DYN):</strong> Darbelere karşı dayanıklılığı gösterir. Yükseldikçe zarar görme olasılığı azalır. Zırh bu değeri etkiler: Hafif zırh +1, Ağır zırh +2, Karma zırh +3. Kalkan yalnızca göğüs göğse dövüşte +1 sağlar.</p>
+
+      <p><strong>MORAL (MRL):</strong> Figürün cesaretini, kendisine ve duruma hakimiyetini gösterir.</p>
+
+      <h3>Profil</h3>
+
+      <p>Bir figürün tüm özellikleri topluca gösterilebilir. Buna figürün <strong>profili</strong> denir. Örnek:</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Ad</th><th>HRK</th><th>ATŞ</th><th>DVŞ</th><th>KUV</th><th>DYN</th><th>MRL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Rick</td><td>8</td><td>4+</td><td>3</td><td>3</td><td>3</td><td>7</td>
+          </tr>
+        </tbody>
+      </table>
+
+
+      <!-- OYUN DÜZENİ -->
+      <h2 id="oyun-duzeni">Oyun Düzeni</h2>
+
+      <p>Oyun iki taraf arasında oynanır. Çarpışmanın kargaşasını oynanır bir hale getirmek için oynanış belirli bir sıra izler. Her oyun turu aşağıdaki beş aşamadan oluşur:</p>
+
+      <div class="my-6">
+        <div class="phase-box">
+          <span class="phase-num">1</span>
+          <div>
+            <p class="!mb-0"><strong>Öncelik Aşaması</strong> — Taraflar karşılıklı zar atarak kimin öncelik elde ettiğini belirler.</p>
+          </div>
+        </div>
+        <div class="phase-box">
+          <span class="phase-num">2</span>
+          <div>
+            <p class="!mb-0"><strong>Hareket Aşaması</strong> — Her iki taraf da figürlerini hareket ettirir. İlk olarak önceliğe sahip taraf, ardından diğer taraf.</p>
+          </div>
+        </div>
+        <div class="phase-box">
+          <span class="phase-num">3</span>
+          <div>
+            <p class="!mb-0"><strong>Atış Aşaması</strong> — Taraflar menzilli silahlarla atış yapar. Öncelik sahibi taraf önce ateş açar.</p>
+          </div>
+        </div>
+        <div class="phase-box">
+          <span class="phase-num">4</span>
+          <div>
+            <p class="!mb-0"><strong>Dövüş Aşaması</strong> — Göğüs göğse mücadeleler çözümlenir. Öncelik sahibi taraf çözümleme sırasını belirler.</p>
+          </div>
+        </div>
+        <div class="phase-box">
+          <span class="phase-num">5</span>
+          <div>
+            <p class="!mb-0"><strong>Moral Aşaması</strong> — Sinmiş figürler toparlanmayı dener.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="rule-block">
+        Bu oyun düzeni, bir taraf pes edene, yenilene ya da önceden belirlenmiş olan amaca ulaşana dek sürer.
+      </div>
+
+
+      <!-- ÖNCELİK -->
+      <h2 id="oncelik">Öncelik</h2>
+
+      <p>Öncelik, bir oyun sırasının her bir aşamasında hangi tarafın ilk olarak hamle yapacağını belirler. Bu; taraftaki figürlerin düşünme ve harekete geçmedeki hızını, tetikte olma halini, tepki hızını ve muharebenin kargaşasını temsil eder.</p>
+
+      <p>Her turun başında taraflar birer zar atar. Zarları büyük gelen taraf o turda hangi tarafın önceliğe sahip olacağını belirler — kendisi önceliğe sahip olabilir ya da öncelik sırasını diğer oyuncuya verebilir.</p>
+
+      <div class="rule-block">
+        Öncelik bir kere belirlendikten sonra o oyun turu boyunca tüm aşamalarda öncelik sahibi taraf ilk olarak hamlelerini yapar.
+      </div>
+
+
+      <!-- HAREKET -->
+      <h2 id="hareket">Hareket</h2>
+
+      <p>Hareket aşamasında ilk olarak önceliğe sahip taraf figürlerinin tamamını ya da dilediklerini hareket ettirir. Öncelik sahibi taraf hamlelerini tamamlayınca sıra diğer tarafa geçer.</p>
+
+      <h3>Hareket Etme</h3>
+
+      <p>Figürler diledikleri yönde, <strong>HAREKET</strong> özelliklerinin izin verdiği ölçüde santimetre cinsinden hareket edebilirler. Bir figür hareketinin tamamını, bir kısmını kullanabilir ya da hiç hareket etmeyebilir. Düz bir çizgide ilerlemek zorunda değildir. Figürler diğer figürlerin içinden geçemezler.</p>
+
+      <div class="rule-block">
+        <strong>Etki alanı:</strong> Bir hareketin sonucunda bir düşman figürüyle arasında 2 cm'den daha az kalan bir figür, hücum etmiş sayılır ve göğüs göğse dövüştedir.
+      </div>
+
+      <h3>Koşma</h3>
+
+      <p>Bir figür hareket aşamasında koşmayı seçebilir. Koşan yaya figürler <strong>hareket değerinin iki katı</strong> kadar ilerleyebilir. Ancak bu turda atış yapamaz ve göğüs göğse dövüş başlatamaz. Atlı figürler koşu kuralından faydalanamaz. Koşarak istemeden dövüşe giren figür –2 ceza ile savaşır. Bir figür üst üste iki tur koşu yapamaz.</p>
+
+      <h3>Hücum</h3>
+
+      <p>Hücum özel bir hareket biçimidir; tamamlandığında figür bir düşman figürüyle dövüşe gireceği şekilde sonlanır. Hücum edeceğiniz figürü açıkça belirttikten sonra HAREKET değeri dahilindeki mesafeyi ölçerek figürü yerleştirin. Figürler yalnızca hücum ederek göğüs göğse dövüşe girebilirler.</p>
+
+      <p><strong>Görüş alanı:</strong> Bir figürün hücum edebilmesi için hedefin 90 derecelik görüş açısı içinde olması gerekir. Figürler hareket etmeden önce, ederken ya da ettikten sonra diledikleri yöne dönebilirler; dönüş hareket olarak sayılmaz.</p>
+
+      <p><strong>Başarısız hücum:</strong> Hücum açıkça belirtilir ancak hareket sonunda hedefe 2 cm'den fazla mesafe kalırsa başarısız sayılır. Figür bulunduğu yerde kalır ve o tur başka hamle yapamaz.</p>
+
+      <h3>Arazi</h3>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Arazi Türü</th><th>Hareket Etkisi</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>Açık arazi (yollar, ovalar, düzlükler vb.)</td><td>Etki yok</td></tr>
+          <tr><td>Zorlu arazi (bataklık, sık ağaçlık, kumsallar vb.)</td><td>Hareket yarıya düşer</td></tr>
+          <tr><td>Engel (figür boyunun yarısından yüksek)</td><td>Engel sınaması gerekir</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Atlama, Sıçrama ve Tırmanma</h3>
+
+      <p>Bir figür kendi boyunun iki katına kadar olan bir engelin üzerinden atlayabilir veya tırmanabilir. Figür engelin kenarına yerleştirilir ve bir zar atılır:</p>
+
+      <table>
+        <thead>
+          <tr><th>z6</th><th>Sonuç</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>Başarısız — figür olduğu yerde kalır, tur biter</td></tr>
+          <tr><td>2–5</td><td>Başarılı — engeli aşar, hareketi sonlanır</td></tr>
+          <tr><td>6</td><td>Sorunsuz — engeli aşar, hareketine devam edebilir</td></tr>
+        </tbody>
+      </table>
+
+      <p>Ağır zırh –1, karma zırh –2 ceza alır.</p>
+
+
+      <!-- ATIŞ -->
+      <h2 id="atis">Atış</h2>
+
+      <p>Öncelik sahibi taraf atışlarını önce yapar. Figürleri birer birer seçerek çözümler, ardından sıra diğer tarafa geçer.</p>
+
+      <h3>Atış Yapma</h3>
+
+      <ol>
+        <li><strong>Hedef belirle:</strong> Hedefin 90° görüş alanı içinde olup olmadığını kontrol et.</li>
+        <li><strong>Erimi ölç:</strong> Hedefin silahın erimi içinde olup olmadığını kontrol et.</li>
+        <li><strong>Etkenleri belirle:</strong> Siper, boyut farkı vb. tüm etkenleri tespit et.</li>
+        <li><strong>İsabet zarı at:</strong> Zar at, etkenleri ekle. Sonuç figürün ATŞ değerine eşit veya yüksekse isabet.</li>
+        <li><strong>Yaralama zarı at:</strong> Yaralama tablosuna göre belirle.</li>
+        <li><strong>Zaiyatı belirle:</strong> Yaralanan figür masadan kaldırılır; isabet alıp yaralanmayan sinmiş sayılır.</li>
+      </ol>
+
+      <div class="rule-block">
+        Göğüs göğse dövüş içindeki birimlere ateş edilmez.
+      </div>
+
+      <h3>Atış Etkenleri</h3>
+
+      <table>
+        <thead>
+          <tr><th>Etken</th><th>Değişken</th><th>Açıklama</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Sinmiş hedefe atış</td><td>+1</td><td>Hedef yüzüstü yatırılmışsa</td></tr>
+          <tr><td>Büyük hedefe atış</td><td>+1</td><td>İnsan boyundan büyük hedefler</td></tr>
+          <tr><td>Küçük hedefe atış</td><td>–1</td><td>İnsan boyundan küçük hedefler</td></tr>
+          <tr><td>Yüksekten atış</td><td>+1</td><td>Atıcı hedefe kıyasla daha yüksekte</td></tr>
+          <tr><td>Hedef kısmi siperde</td><td>–1</td><td>Hedefin yarısına kadarı siper ardında</td></tr>
+          <tr><td>Hedef tam siperde</td><td>–2</td><td>Hedefin yarısından çoğu siper ardında</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Umutsuz Atış</h3>
+
+      <p>Tüm etkenler eklendikten sonra gereken isabet zarı 7 veya daha fazlaysa, oyuncu isteğe bağlı olarak bir <strong>umutsuz atış</strong> yapabilir. Zar yalnızca ham 6 geldiğinde isabetli sayılır (etkenler dikkate alınmaz). Yaralama zarı da yalnızca ham 6 ile başarılı kabul edilir. Sinme etkisi uygulanmaz.</p>
+
+      <h3>Yaralama</h3>
+
+      <p>İsabetli bir atışın hedefi yaralayıp yaralamadığını belirlemek için bir zar atılır. Silahın <strong>KUVVETi</strong> ile hedefin <strong>DAYANIMının</strong> kesiştiği yerdeki değeri yaralama tablosundan bulun. Zar sonucu bu değere eşit veya yüksekse hedef yara alır ve oyundan çıkarılır.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>DYN \ KUV</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td>4</td><td>5</td><td>6</td><td>6</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+          <tr><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>6</td><td>–</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+          <tr><td>3</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>6</td><td>–</td><td>–</td><td>–</td><td>–</td></tr>
+          <tr><td>4</td><td>2</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>6</td><td>–</td><td>–</td><td>–</td></tr>
+          <tr><td>5</td><td>2</td><td>2</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>6</td><td>–</td><td>–</td></tr>
+          <tr><td>6</td><td>2</td><td>2</td><td>2</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>6</td><td>–</td></tr>
+          <tr><td>7</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>6</td></tr>
+          <tr><td>8</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td></tr>
+          <tr><td>9</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>3</td><td>4</td><td>5</td></tr>
+          <tr><td>10</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>2</td><td>3</td><td>4</td></tr>
+        </tbody>
+      </table>
+
+      <p>İsabetli bir atış hedefi yaralamasa da figürü <strong>sinmiş</strong> hale sokar.</p>
+
+
+      <!-- DÖVÜŞ -->
+      <h2 id="dovus">Dövüş</h2>
+
+      <p>Kaide teması halinde ya da bir düşman figüre 2 cm'den yakın olan tüm figürler bu aşamada dövüşmek zorundadır. Dövüşler birer birer çözümlenir; öncelik sahibi taraf çözümleme sırasını seçer.</p>
+
+      <h3>Dövüşme</h3>
+
+      <ol>
+        <li><strong>Etkenleri belirle:</strong> Figürlerin konumlarını incele.</li>
+        <li><strong>Saldırı zarı at:</strong> Her iki figür için birer zar atılır. Gelen zara figürün DVŞ değeri eklenir. Yüksek toplam kazanır.</li>
+        <li><strong>İlerle:</strong> Kazanan figür, kaybedene doğru 4 cm ilerler.</li>
+        <li><strong>Yaralama zarı at:</strong> Kazananın KUVVETi ile kaybedenin DAYANIMı yaralama tablosundan karşılaştırılır.</li>
+        <li><strong>Zaiyatı kaldır:</strong> Yara alan figürler masadan kaldırılır.</li>
+      </ol>
+
+      <p>Toplamlar eşitse darbe gerçekleşmez ve dövüş berabere biter.</p>
+
+      <h3>Dövüş Etkenleri</h3>
+
+      <table>
+        <thead>
+          <tr><th>Etken</th><th>Değişken</th><th>Açıklama</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Yüksekte</td><td>+1</td><td>Saldıran figür düşmana kıyasla daha yüksekte</td></tr>
+          <tr><td>Destek</td><td>+1</td><td>Aynı hedefe temas eden her dost figür için (en fazla +2)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Geri Çekilme ve İlerleme</h3>
+
+      <p>Dövüşü kaybeden figür saldırandan uzağa doğru <strong>4 cm geri çekilir</strong>. Bu geri çekilme otomatiktir ve zorlu arazi şartlarından etkilenmez. Kazanan taraf da otomatikman kaybedene doğru 4 cm ilerler. İlerlemek istemeyen figür derhal bir moral sınamasını başarıyla geçmek zorundadır.</p>
+
+      <p>Kaybeden figürün geri çekilebileceği yer yoksa (duvar, uçurum, düşman figürler) figür <strong>siner</strong> ve yere yüzüstü yatırılır.</p>
+
+      <div class="rule-block">
+        <strong>Sinmiş figürler:</strong> Sinmiş bir figür göğüs göğse dövüşe girerse otomatik olarak kaybeder. Doğrudan yaralama zarı atılır ve zırh dikkate alınmaz.
+      </div>
+
+      <h3>Boğuşma</h3>
+
+      <p>Birden fazla figürün aynı dövüşe katıldığı durumlara <strong>boğuşma</strong> denir. Her figür yalnızca bir rakiple eşleştirilerek dövüşür; eşleştirilemeyen figürler destek verir. Aynı hedefe temas eden ancak eşleşmemiş her dost figür, eşleşen figüre <strong>+1 destek</strong> sağlar (en fazla +2). Destek veren figürler dövüş sonucu kaybetmiş sayılmaz; geri çekilmezler ve yara almazlar.</p>
+
+
+      <!-- MORAL -->
+      <h2 id="moral">Moral</h2>
+
+      <p>Moral aşaması çatışmanın kaderinin belirlendiği anı temsil eder. Sinmiş olan figürlerin bir sonraki turda kalkıp çatışmaya devam edip edemeyeceği <strong>moral sınamasıyla</strong> belirlenir.</p>
+
+      <h3>Sinmiş Figürlerin Toparlanması</h3>
+
+      <p>Moral sınamaları öncelik sırasını izler. Bir taraf, sinmiş olan her bir figürü için <strong>iki zar atar</strong> ve gelen sayıları toplar. Sonuç, figürün moral değerine eşit ya da düşükse figür toparlanır ve dik olarak masaya konur. Moral sınamasını geçemeyen figürler sinmiş halde kalır ve bir sonraki turda moral aşamasına dek hamle yapamaz.</p>
+
+      <div class="rule-block">
+        <strong>Yüreklendirme:</strong> Sinmiş bir figürün 5 cm çevresinde bir lider bulunuyorsa, sınama figürün kendi moral değeri yerine liderin moral değeriyle yapılabilir.
+      </div>
+
+      <h3>İlerlemeden Durma</h3>
+
+      <p>Göğüs göğse dövüşü kazanan figür otomatikman geri çekilen figüre doğru ilerler. Kazanan taraf ilerlemek istemiyorsa bir moral sınamasından geçmelidir: iki zar atılır, toplam figürün moral değerine eşit veya düşükse figür olduğu yerde kalabilir. Aksi takdirde otomatik olarak 4 cm ilerler.</p>
+
+    </article>
+
+
+    <!-- Back to top -->
+    <div class="mt-16 pt-8 border-t border-muted text-center">
+      <a href="#" class="font-body text-sm text-inkfade hover:text-ink transition-colors">↑ Başa dön</a>
+    </div>
+
+  </main>
+
+
+  <!-- FOOTER -->
+  <footer class="border-t border-muted py-10 bg-subtle mt-12">
+    <div class="max-w-3xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="font-body text-xs text-inkghost">© 2026 Sahipkıran. CC BY-SA 4.0</p>
+      <div class="flex items-center gap-5">
+        <a href="index.html" class="footer-link text-xs">Ana Sayfa</a>
+        <a href="index.html#caglar" class="footer-link text-xs">Tam Kuralları İndir</a>
+        <a href="https://savasmasai.github.com/sahipkiran" class="footer-link text-xs">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+</html>

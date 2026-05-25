@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sahipkıran — Savaş Oyunu</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Manrope:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwindcss.config = {
+      theme: {
+        extend: {
+          colors: {
+            surface: '#ffffff',
+            subtle: '#f6f5f3',
+            muted: '#eae8e4',
+            ink: '#1a1917',
+            inksoft: '#3d3b37',
+            inkfade: '#7a7770',
+            inkghost: '#b0aba3',
+            gold: '#9e7c2b',
+            darkgold: '#7a5f1e',
+            warmgold: '#c4a240',
+            crimson: '#9b2226',
+            deepcrimson: '#6b1518',
+          },
+          fontFamily: {
+            display: ['IBM Plex Serif', 'Georgia', 'serif'],
+            body: ['Manrope', 'system-ui', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      background-color: #ffffff;
+      color: #1a1917;
+      overflow-x: hidden;
+    }
+
+    /* Force font families via CSS — Tailwind CDN config unreliable for custom fonts */
+    .font-display { font-family: 'IBM Plex Serif', Georgia, serif !important; }
+    .font-body { font-family: 'Manrope', system-ui, sans-serif !important; }
+    .font-mono { font-family: 'JetBrains Mono', monospace !important; }
+
+    /* Decorative divider */
+    .divider-line {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.2rem;
+      padding: 1.5rem 0;
+    }
+    .divider-line::before,
+    .divider-line::after {
+      content: '';
+      height: 1px;
+      flex: 1;
+      background: #eae8e4;
+    }
+    .divider-line span {
+      color: #b0aba3;
+      font-family: 'Instrument Serif', serif;
+      font-size: 1.2rem;
+    }
+
+    /* CTA button style */
+    .cta-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.8rem 1.8rem;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #fff;
+      background: #1a1917;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-decoration: none;
+      border-radius: 2px;
+    }
+    .cta-primary:hover {
+      background: #3d3b37;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 24px rgba(0,0,0,0.12);
+    }
+    .cta-primary[style*="background:#fff"]:hover,
+    .cta-primary[style*="background: #fff"]:hover {
+      background: #f0eeeb !important;
+      box-shadow: 0 6px 24px rgba(0,0,0,0.2) !important;
+    }
+
+    .cta-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      padding: 0.8rem 1.8rem;
+      font-family: 'Manrope', sans-serif;
+      font-weight: 700;
+      font-size: 0.8rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #1a1917;
+      background: transparent;
+      border: 1.5px solid #eae8e4;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      text-decoration: none;
+      border-radius: 2px;
+    }
+    .cta-secondary:hover {
+      border-color: #1a1917;
+      transform: translateY(-1px);
+    }
+    /* When secondary CTA is over dark bg (hero, CTA band) */
+    .cta-secondary[style*="color:#fff"]:hover,
+    .cta-secondary[style*="color: #fff"]:hover {
+      border-color: rgba(255,255,255,0.7) !important;
+      color: #fff !important;
+    }
+
+    /* Era card hover */
+    .era-card {
+      position: relative;
+      overflow: hidden;
+      border: 1px solid #eae8e4;
+      border-radius: 3px;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    }
+    .era-card:hover {
+      border-color: #d4d0ca;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.06);
+    }
+
+    /* Supplement tag */
+    .supplement-tag {
+      font-family: 'Manrope', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      padding: 0.25rem 0.75rem;
+      border: 1.5px solid;
+      border-radius: 2px;
+    }
+
+    /* Scroll reveal */
+    .reveal {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* Hero image frame — no longer used */
+
+    /* Nav states */
+    #main-nav[data-scrolled="false"] {
+      background: transparent;
+    }
+    #main-nav[data-scrolled="false"] .nav-logo { color: #fff; }
+    #main-nav[data-scrolled="false"] .nav-logo:hover { color: rgba(255,255,255,0.7); }
+    #main-nav[data-scrolled="false"] .nav-logo-img { filter: none; }
+    #main-nav[data-scrolled="false"] .nav-link { color: rgba(255,255,255,0.7); }
+    #main-nav[data-scrolled="false"] .nav-link:hover { color: #fff; }
+
+    #main-nav[data-scrolled="true"] {
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid #eae8e4;
+    }
+    #main-nav[data-scrolled="true"] .nav-logo { color: #1a1917; }
+    #main-nav[data-scrolled="true"] .nav-logo:hover { color: #3d3b37; }
+    #main-nav[data-scrolled="true"] .nav-logo-img { filter: brightness(0); }
+    #main-nav[data-scrolled="true"] .nav-link { color: #7a7770; }
+    #main-nav[data-scrolled="true"] .nav-link:hover { color: #1a1917; }
+
+    .footer-link {
+      color: #7a7770;
+      text-decoration: none;
+      transition: color 0.2s;
+      font-family: 'Manrope', sans-serif;
+    }
+    .footer-link:hover {
+      color: #1a1917;
+    }
+
+    @media (max-width: 768px) {
+      .cta-primary, .cta-secondary {
+        width: 100%;
+        justify-content: center;
+        padding: 0.9rem 1.5rem;
+      }
+    }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- ============================================= -->
+  <!-- NAV -->
+  <!-- ============================================= -->
+  <nav id="main-nav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" data-scrolled="false">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <!-- PLACEHOLDER: Sahipkıran Logosu — Aynı logo dosyası, nav boyutunda görüntülenecek -->
+      <a href="#" class="nav-logo-link">
+        <img src="images/logo.png" alt="Sahipkıran" class="nav-logo-img h-7 w-auto transition-all duration-300" />
+      </a>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#caglar" class="nav-link font-body text-sm transition-colors font-medium tracking-wide">Çağlar</a>
+        <a href="#eklentiler" class="nav-link font-body text-sm transition-colors font-medium tracking-wide">Eklentiler</a>
+        <a href="#afsundehliz" class="nav-link font-body text-sm transition-colors font-medium tracking-wide">Afsundehliz</a>
+        <a href="srd.html" class="cta-primary nav-cta" style="padding:0.5rem 1.3rem; font-size:0.72rem;">SRD</a>
+      </div>
+      <button id="mobile-menu-btn" class="md:hidden nav-link transition-colors" aria-label="Menü">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden border-t border-white/10 bg-black/80 backdrop-blur-md px-6 py-4 space-y-4">
+      <a href="#caglar" class="block font-body text-sm text-white/70 hover:text-white font-medium tracking-wide">Çağlar</a>
+      <a href="#eklentiler" class="block font-body text-sm text-white/70 hover:text-white font-medium tracking-wide">Eklentiler</a>
+      <a href="#afsundehliz" class="block font-body text-sm text-white/70 hover:text-white font-medium tracking-wide">Afsundehliz</a>
+      <a href="srd.html" class="cta-primary block text-center" style="font-size:0.72rem;">SRD</a>
+    </div>
+  </nav>
+
+
+  <!-- ============================================= -->
+  <!-- HERO -->
+  <!-- ============================================= -->
+  <section class="relative min-h-screen flex items-end pb-20 pt-32 overflow-hidden">
+    <!-- PLACEHOLDER: Savaş Alanı Fotoğrafı — Boyalı minyatürlerle dolu bir oyun masasının fotoğrafı -->
+    <!-- Bu görseli background-image olarak ekleyin. Önerilen: en az 1920×1080 px, yatay çekim -->
+    <!-- Görseli eklemek için aşağıdaki div'de style="background-image: url('FOTO_YOLU.jpg')" kullanın -->
+    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('images/table-photo2.jpg'); background-color: #2a2520;"></div>
+
+    <!-- Dark overlay gradient — bottom-heavy so text is readable, top fades gently -->
+    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/25"></div>
+    <!-- Extra bottom anchor -->
+    <div class="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black/50 to-transparent"></div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-6 w-full">
+      <div class="max-w-2xl reveal">
+        <p class="font-body text-xs tracking-[0.25em] uppercase text-warmgold font-bold mb-5">Minyatür Bağımsız · Tamamen Ücretsiz</p>
+
+        <h1 class="font-display text-6xl sm:text-7xl lg:text-8xl text-white leading-[0.95] mb-7 italic drop-shadow-lg">
+          Sahipkıran
+        </h1>
+
+        <p class="font-body text-lg sm:text-xl text-white/85 leading-relaxed mb-3 max-w-lg font-light">
+          Antik Çağ'dan Dünya Savaşlarına, fantastik diyarlardan uzayın derinliklerine — <em class="font-display not-italic text-white">tek bir sistem, sınırsız savaş alanı.</em>
+        </p>
+        <p class="font-body text-base text-white/55 leading-relaxed mb-10 max-w-md">
+          Koleksiyonundaki her minyatürü sahaya sür. Kurallara hükmet, tarihi yeniden yaz. Ücretsiz indir, hemen oyna.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-3">
+          <a href="#caglar" class="cta-primary" style="background:#fff; color:#1a1917;">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14m0 0l-6-6m6 6l6-6"/></svg>
+            Kuralları İndir
+          </a>
+          <a href="srd.html" class="cta-secondary" style="color:#fff; border-color:rgba(255,255,255,0.25);">
+            SRD / Kural Rehberini İncele
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom edge fade into white page -->
+    <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent"></div>
+  </section>
+
+
+  <!-- ============================================= -->
+  <!-- DIVIDER -->
+  <!-- ============================================= -->
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="divider-line"><span>·</span></div>
+  </div>
+
+
+  <!-- ============================================= -->
+  <!-- THE ERAS — CORE VARIANTS -->
+  <!-- ============================================= -->
+  <section id="caglar" class="py-20 lg:py-28">
+    <div class="max-w-6xl mx-auto px-6">
+
+      <div class="text-center mb-16 reveal">
+        <p class="font-body text-xs tracking-[0.25em] uppercase text-gold font-bold mb-3">Temel Kural Setleri</p>
+        <h2 class="font-display text-4xl sm:text-5xl text-ink italic">İki Çağ, Tek Sistem</h2>
+        <p class="font-body text-base text-inkfade mt-5 max-w-xl mx-auto leading-relaxed">Sahipkıran'ın çekirdeğinde iki dönem yatar. Her biri kendi silahlarını, taktiklerini ve savaş alanı atmosferini taşır — ama iskelet aynı mekanikler üzerinde yükselir.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6 lg:gap-8">
+
+        <!-- Era 1: Kılıç & Kalkan -->
+        <div class="era-card bg-white reveal">
+          <img src="images/kilic-kalkan.png" alt="Kılıç & Kalkan" class="w-full aspect-video object-cover border-b border-muted" />
+          <div class="p-7 lg:p-8">
+            <p class="font-body text-xs tracking-[0.2em] uppercase text-crimson font-bold mb-2">Kılıçlar & Kalkanlar</p>
+            <h3 class="font-display text-3xl text-ink italic mb-4">Kılıç & Kalkan</h3>
+            <p class="font-body text-base text-inksoft leading-relaxed mb-6">
+              Sümerlerden Osmanlı'ya, Romalılardan Vikinglere sayısız tarihi orduyla göğüs göğse çarpışmaları masana taşı. Hücum et, kuşat, bozguna uğrat.
+            </p>
+            <p class="font-body text-xs text-inkghost font-medium mb-6 tracking-wide">Orta Çağ · Antik Çağ · Karanlık Çağlar</p>
+            <a href="files/sahipkiran-kilic-kalkan.pdf" class="cta-primary" style="font-size:0.72rem;">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14m0 0l-6-6m6 6l6-6"/></svg>
+              Ücretsiz İndir
+            </a>
+          </div>
+        </div>
+
+        <!-- Era 2: Top & Tüfek -->
+        <div class="era-card bg-white reveal" style="transition-delay:0.12s;">
+          <img src="images/top-tufek.png" alt="Top & Tüfek" class="w-full aspect-video object-cover border-b border-muted" />
+          <div class="p-7 lg:p-8">
+            <p class="font-body text-xs tracking-[0.2em] uppercase text-gold font-bold mb-2">Toplar & Tüfekler</p>
+            <h3 class="font-display text-3xl text-ink italic mb-4">Top & Tüfek</h3>
+            <p class="font-body text-base text-inksoft leading-relaxed mb-6">
+              Siperler kazılır, makineli tüfekler ateş açar, topçu bataryaları geceyi aydınlatır. Modern savaşın acımasız yüzüyle tanış. Her karış toprak için savaş.
+            </p>
+            <p class="font-body text-xs text-inkghost font-medium mb-6 tracking-wide">1. Dünya Savaşı · 2. Dünya Savaşı · Kurtuluş Savaşı</p>
+            <a href="files/sahipkiran-top-tufek.pdf" class="cta-primary" style="font-size:0.72rem;">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14m0 0l-6-6m6 6l6-6"/></svg>
+              Ücretsiz İndir
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================= -->
+  <!-- DIVIDER -->
+  <!-- ============================================= -->
+  <div class="max-w-5xl mx-auto px-6">
+    <div class="divider-line"><span>·</span></div>
+  </div>
+
+
+  <!-- ============================================= -->
+  <!-- SUPPLEMENTS -->
+  <!-- ============================================= -->
+  <section id="eklentiler" class="py-20 lg:py-28">
+    <div class="max-w-6xl mx-auto px-6">
+
+      <div class="text-center mb-16 reveal">
+        <p class="font-body text-xs tracking-[0.25em] uppercase text-gold font-bold mb-3">İsteğe Bağlı Eklentiler</p>
+        <h2 class="font-display text-4xl sm:text-5xl text-ink italic">Savaş Alanını Genişlet</h2>
+        <p class="font-body text-base text-inkfade mt-5 max-w-xl mx-auto leading-relaxed">Temel kuralların üzerine istif edilen iki bağımsız eklentiyle savaşın sınırlarını aş. Büyü veya teknoloji — ya da ikisini birden — sahana kat.</p>
+      </div>
+
+      <div class="grid md:grid-cols-2 gap-6 lg:gap-8">
+
+        <!-- Supplement 1: Afsunküf -->
+        <div class="reveal bg-subtle border border-muted rounded-sm p-8 lg:p-10">
+          <span class="supplement-tag text-crimson border-crimson/30 mb-6 inline-block">Fantastik Eklenti</span>
+          <h3 class="font-display text-3xl lg:text-4xl text-ink italic mb-4">Afsunküf</h3>
+		  <img src="images/afsunkuf.png" alt="Afsunküf" class="w-full aspect-[9/5] object-cover border border-muted rounded-sm mb-6" />
+          <p class="font-body text-base text-inksoft leading-relaxed mb-6">
+            Cadılar afsunküf mantarının gücüyle büyü örer, karabüyücüler iskelet orduları diriltir, umacılar iblisleri çağırır, devler savaş alanını kasıp kavurur. <strong class="font-semibold text-ink">Afsunküf</strong>, Sahipkıran: Kılıç & Kalkan'a fantastik bir katman ekler: beş kavimlik kurmaca Arkea dünyası, beş cadı türü ve büyü sistemi, afsunlu silahlar ve yadigârlar, dev yaratıklar ve altı senaryo. Kalkan duvarı kur, falanks diz, yaylım ateşi yağdır — ya da bire bir dövüşte düşman lidere meydan oku.
+          </p>
+          <a href="files/sahipkiran-afsunkuf.pdf" class="cta-secondary" style="font-size:0.72rem;">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14m0 0l-6-6m6 6l6-6"/></svg>
+            Eklentiyi İndir
+          </a>
+        </div>
+
+        <!-- Supplement 2: Psikonik -->
+        <div class="reveal bg-subtle border border-muted rounded-sm p-8 lg:p-10" style="transition-delay:0.12s;">
+          <span class="supplement-tag text-gold border-gold/30 mb-6 inline-block">Bilimkurgu Eklentisi</span>
+          <h3 class="font-display text-3xl lg:text-4xl text-ink italic mb-4">Psikonik</h3>
+		  <img src="images/psikonik.png" alt="Psikonik" class="w-full aspect-[9/5] object-cover border border-muted rounded-sm mb-6" />
+          <p class="font-body text-base text-inksoft leading-relaxed mb-6">
+            Psişikler zihinleri büker, boyutlar arası varlıklar gerçekliği çarpıtır, dünya dışı ordular insanlığın sınırlarını zorlar. <strong class="font-semibold text-ink">Psikonik</strong>, Sahipkıran: Top & Tüfek'e bilim kurgu katmanı ekler: Annunkara'nın mirasıyla şekillenen bir galaksi, insanlık kuvvetleri (GÖK birlikleri, Güneş Jandarması, özel şirketler), üç zenoid tehdidi (eloi, morlok, entomon), psişik güçler sistemi ve psikoteknoloji. Senaryo oluşturucu, gezegen ve sistem üreteçleriyle kendi seferlerini kur — alevkusan ateşle, binalarda mevzilen, Araf'ın kıyısında savaş.
+          </p>
+          <a href="files/sahipkiran-psikonik.pdf" class="cta-secondary" style="font-size:0.72rem;">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14m0 0l-6-6m6 6l6-6"/></svg>
+            Eklentiyi İndir
+          </a>
+        </div>
+
+      </div>
+
+      <div class="mt-10 text-center reveal">
+        <p class="font-body text-sm text-inkfade italic max-w-xl mx-auto">
+          Her iki eklenti de temel kural setlerinin üzerine bağımsız olarak eklenir. Birini, ikisini veya hiçbirini kullanabilirsin — sistem modüler çalışır.
+        </p>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ============================================= -->
+  <!-- FINAL CTA BAND -->
+  <!-- ============================================= -->
+  <section class="py-20 bg-ink relative overflow-hidden">
+    <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E'); background-size: 200px;"></div>
+    <div class="relative z-10 max-w-3xl mx-auto px-6 text-center reveal">
+      <h2 class="font-display text-4xl sm:text-5xl text-white italic mb-4">Minyatürlerini Sahaya Sür</h2>
+      <p class="font-body text-base text-white/60 mb-10 max-w-xl mx-auto leading-relaxed">Sahipkıran tamamen ücretsiz, açık kaynak ve topluluk destekli. Kuralları indir, masanı hazırla, savaşa başla.</p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="#" class="cta-primary" style="background:#fff; color:#1a1917;">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14m0 0l-6-6m6 6l6-6"/></svg>
+          Ücretsiz Kuralları İndir
+        </a>
+        <a href="#" class="cta-secondary" style="color:#fff; border-color:rgba(255,255,255,0.2);">
+          SRD / Kural Rehberini İncele
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ============================================= -->
+  <!-- AFSUNDEHLIZ — RPG (COMING SOON) -->
+  <!-- ============================================= -->
+  <section id="afsundehliz" class="relative min-h-[85vh] flex items-center overflow-hidden">
+    <!-- PLACEHOLDER: Afsundehliz Atmosfer Fotoğrafı — Masa üstünde RPG sahası, zar, karakter kağıtları vb. -->
+    <!-- Önerilen boyut: en az 1920×1080 px, yatay çekim -->
+    <!-- Görseli eklemek için aşağıdaki div'de style="background-image: url('FOTO_YOLU.jpg')" kullanın -->
+    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('images/afsundehliz.png'); background-color: #1e1b2e;"></div>
+
+    <!-- Overlay — slightly purple-tinted for RPG mystique -->
+    <div class="absolute inset-0 bg-gradient-to-r from-black/80 via-black/55 to-black/30"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-black/20"></div>
+
+    <!-- Top edge fade from white -->
+    <div class="absolute top-0 left-0 right-0 h-20 bg-gradient-to-b from-white to-transparent z-10"></div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-6 w-full py-24">
+      <div class="max-w-xl reveal">
+        <span class="inline-block font-body text-xs tracking-[0.25em] uppercase font-bold mb-5 px-3 py-1.5 border rounded-sm text-warmgold/90 border-warmgold/30 bg-white/5 backdrop-blur-sm">Yakında Geliyor</span>
+
+        <h2 class="font-display text-5xl sm:text-6xl lg:text-7xl text-white leading-[0.95] mb-6 italic drop-shadow-lg">
+          Afsundehliz
+        </h2>
+
+        <p class="font-body text-lg sm:text-xl text-white/80 leading-relaxed mb-4 max-w-lg font-light">
+          Sahipkıran evreninin masa başı rol yapma oyunu. Savaş alanının ötesine geç — karakterini yarat, dehlizlere dal, kaderini yaz.
+        </p>
+        <p class="font-body text-base text-white/50 leading-relaxed mb-8 max-w-md">
+          Sahipkıran'ın mekanik iskeletinden doğan, bağımsız ve tam teşekküllü bir RYO deneyimi. Geliştirme sürecini takip et, deneme oyunlarına katıl.
+        </p>
+
+        <div class="flex flex-col sm:flex-row gap-3 items-start">
+          <a href="https://forms.gle/9i3FdtyxKFngWV997" class="cta-secondary" style="color:#fff; border-color:rgba(255,255,255,0.25);">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+            Duyurulara Abone Ol
+          </a>
+          <!-- <span class="font-body text-sm text-white/30 self-center hidden sm:inline">·</span>
+          <a href="#" class="font-body text-sm text-white/50 hover:text-white/80 transition-colors self-center underline underline-offset-4 decoration-white/20 hover:decoration-white/50">
+            Geliştirme günlüğünü oku
+          </a> -->
+        </div>
+      </div>
+    </div>
+
+    <!-- Bottom edge fade -->
+    <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-subtle to-transparent z-10"></div>
+  </section>
+
+
+  <!-- ============================================= -->
+  <!-- FOOTER -->
+  <!-- ============================================= -->
+  <footer class="border-t border-muted py-12 bg-subtle">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="grid sm:grid-cols-3 gap-8 mb-10">
+
+        <div>
+          <p class="font-display text-xl text-ink italic mb-3">Sahipkıran</p>
+          <p class="font-body text-sm text-inkfade leading-relaxed">
+            Minyatür bağımsız, tamamen ücretsiz masaüstü savaş oyunu.
+          </p>
+        </div>
+
+        <div>
+          <p class="font-body text-xs tracking-[0.2em] uppercase text-inkghost font-bold mb-4">Bağlantılar</p>
+          <div class="space-y-2">
+            <a href="#caglar" class="footer-link block text-sm">Kuralları İndir</a>
+            <a href="srd.html" class="footer-link block text-sm">SRD Belgesi</a>
+            <a href="#afsundehliz" class="footer-link block text-sm">Afsundehliz RYO</a>
+            <a href="faq.html" class="footer-link block text-sm">Sık Sorulan Sorular</a>
+          </div>
+        </div>
+
+        <div>
+          <p class="font-body text-xs tracking-[0.2em] uppercase text-inkghost font-bold mb-4">Topluluk</p>
+          <div class="space-y-2">
+            <a href="https://www.youtube.com/@savasmasasi" class="footer-link block text-sm">YouTube Kanalı</a>
+            <a href="https://www.reddit.com/r/Warhammer40KTR/" class="footer-link block text-sm">Reddit Topluluğu</a>
+            <a href="https://savasmasasi.github.com/sahipkiran" class="footer-link block text-sm">GitHub Deposu</a>
+            <a href="mailto:savasmasasi@gmail.com" class="footer-link block text-sm">İletişim</a>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="border-t border-muted pt-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <p class="font-body text-xs text-inkghost">© 2026 Sahipkıran. Tüm içerik CC BY-SA 4.0 lisansı altındadır.</p>
+        <p class="font-body text-xs text-inkghost/50">Sevgiyle ve zarlarla inşa edildi.</p>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- ============================================= -->
+  <!-- SCRIPTS -->
+  <!-- ============================================= -->
+  <script>
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+    });
+
+    // Nav: transparent on hero, solid after scroll
+    const nav = document.getElementById('main-nav');
+    function updateNav() {
+      const scrolled = window.scrollY > window.innerHeight * 0.6;
+      nav.dataset.scrolled = scrolled ? 'true' : 'false';
+    }
+    window.addEventListener('scroll', updateNav, { passive: true });
+    updateNav();
+
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
