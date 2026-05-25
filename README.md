@@ -18,7 +18,7 @@ Oyun iki **temel kural seti** ve iki **isteğe bağlı eklenti** içerir:
 
 | Kural Seti | Dönem | Açıklama |
 |---|---|---|
-| **Kılıç & Kalkan** | Antik Çağ – Orta Çağ | Sümerlerden Osmanlı'ya, yirmi beş ordu listesi, altı senaryo ve sefer kampanyası |
+| **Kılıç & Kalkan** | Antik Çağ – Orta Çağ | Sümerlerden Osmanlı'ya, yirmi beş ordu listesi, altı senaryo ve sefer kuralları |
 | **Top & Tüfek** | Dünya Savaşları – Kurtuluş Savaşı | Modern savaşın acımasız cepheleri: siperler, makineli tüfekler, topçu bataryaları |
 
 ### Eklentiler
@@ -28,7 +28,7 @@ Oyun iki **temel kural seti** ve iki **isteğe bağlı eklenti** içerir:
 | **Afsunküf** | Fantastik | Büyü sistemi, canavar profilleri, efsunlu silahlar ve lanetler |
 | **Psikonik** | Bilimkurgu | Enerji silahları, psiyonik güçler, araç kuralları ve senaryo üreteci |
 
-Eklentiler herhangi bir temel kural setiyle birleştirilebilir. Birini, ikisini veya hiçbirini kullanabilirsiniz — sistem modüler çalışır.
+Eklentiler temel kural setlerinden herhangi biriyle birleştirilebilir. Birini, ikisini veya hiçbirini kullanabilirsiniz — sistem modüler çalışır.
 
 ---
 
