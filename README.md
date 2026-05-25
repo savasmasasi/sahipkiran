@@ -4,7 +4,7 @@
 
 Antik Çağ'dan Dünya Savaşlarına, fantastik diyarlardan uzayın derinliklerine — tek bir sistem, sınırsız savaş alanı. Koleksiyonundaki her minyatürü sahaya sür. Kurallara hükmet, tarihi yeniden yaz.
 
-🌐 [Web sitesi](https://hexhunt.itch.io/sahipkiran) · 📖 [SRD](srd.html) · ❓ [SSS](faq.html) · 💬 [Discord](#)
+🌐 [Web sitesi](https://hexhunt.itch.io/sahipkiran) · 📖 [SRD](srd.html) · ❓ [SSS](faq.html) · ▶️ [YouTube](https://www.youtube.com/@savasmasasi)
 
 ---
 
