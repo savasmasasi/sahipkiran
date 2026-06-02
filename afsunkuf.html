@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sahipkıran: Afsunküf — Arkea Çağı</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+
+  <script>
+    tailwindcss.config = {
+      theme: {
+        extend: {
+          colors: {
+            surface: '#ffffff',
+            subtle: '#f6f5f3',
+            muted: '#eae8e4',
+            ink: '#1a1917',
+            inksoft: '#3d3b37',
+            inkfade: '#7a7770',
+            inkghost: '#b0aba3',
+            gold: '#9e7c2b',
+            darkgold: '#7a5f1e',
+            warmgold: '#c4a240',
+            crimson: '#9b2226',
+            deepcrimson: '#6b1518',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap');
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body { background:#fff; color:#1a1917; overflow-x:hidden; }
+
+    .font-display { font-family: 'IBM Plex Serif', Georgia, serif !important; }
+    .font-body { font-family: 'Manrope', system-ui, sans-serif !important; }
+
+    /* Nav states */
+    #main-nav[data-scrolled="false"] { background: transparent; }
+    #main-nav[data-scrolled="false"] .nav-logo { color: #fff; }
+    #main-nav[data-scrolled="false"] .nav-logo:hover { color: rgba(255,255,255,0.7); }
+    #main-nav[data-scrolled="false"] .nav-logo-img { filter: none; }
+    #main-nav[data-scrolled="false"] .nav-link { color: rgba(255,255,255,0.7); }
+    #main-nav[data-scrolled="false"] .nav-link:hover { color: #fff; }
+
+    #main-nav[data-scrolled="true"] {
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid #eae8e4;
+    }
+    #main-nav[data-scrolled="true"] .nav-logo { color: #1a1917; }
+    #main-nav[data-scrolled="true"] .nav-logo:hover { color: #3d3b37; }
+    #main-nav[data-scrolled="true"] .nav-logo-img { filter: brightness(0); }
+    #main-nav[data-scrolled="true"] .nav-link { color: #7a7770; }
+    #main-nav[data-scrolled="true"] .nav-link:hover { color: #1a1917; }
+
+    /* CTA */
+    .cta-primary {
+      display: inline-flex; align-items: center; gap: 0.55rem;
+      padding: 0.8rem 1.8rem;
+      font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 0.8rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: #fff; background: #1a1917; border: none; border-radius: 2px;
+      cursor: pointer; transition: all 0.25s ease; text-decoration: none;
+    }
+    .cta-primary:hover { background: #3d3b37; transform: translateY(-1px); box-shadow: 0 6px 24px rgba(0,0,0,0.12); }
+
+    .cta-secondary {
+      display: inline-flex; align-items: center; gap: 0.55rem;
+      padding: 0.8rem 1.8rem;
+      font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 0.8rem;
+      letter-spacing: 0.06em; text-transform: uppercase;
+      color: #1a1917; background: transparent; border: 1.5px solid #eae8e4;
+      border-radius: 2px; cursor: pointer; transition: all 0.25s ease; text-decoration: none;
+    }
+    .cta-secondary:hover { border-color: #1a1917; transform: translateY(-1px); }
+
+    /* Region card */
+    .region-card {
+      border: 1px solid #eae8e4; border-radius: 3px;
+      overflow: hidden; transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .region-card:hover { border-color: #d4d0ca; box-shadow: 0 8px 40px rgba(0,0,0,0.06); }
+
+    /* Race card */
+    .race-card {
+      border: 1px solid #eae8e4; border-radius: 3px;
+      overflow: hidden; transition: border-color 0.3s, box-shadow 0.3s;
+    }
+    .race-card:hover { border-color: #d4d0ca; box-shadow: 0 6px 30px rgba(0,0,0,0.06); }
+
+    /* Timeline */
+    .tl-row {
+      display: grid; grid-template-columns: 90px 1fr; gap: 1rem;
+      padding: 0.5rem 0; border-bottom: 1px solid #f6f5f3;
+    }
+    .tl-row:last-child { border-bottom: none; }
+
+    /* Divider */
+    .divider-line {
+      display: flex; align-items: center; justify-content: center; gap: 1.2rem; padding: 1.5rem 0;
+    }
+    .divider-line::before, .divider-line::after {
+      content: ''; height: 1px; flex: 1; background: #eae8e4;
+    }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    .footer-link { color:#7a7770; text-decoration:none; transition:color 0.2s; font-family:'Manrope',sans-serif; }
+    .footer-link:hover { color:#1a1917; }
+
+    @media (max-width: 768px) {
+      .cta-primary, .cta-secondary { width: 100%; justify-content: center; padding: 0.9rem 1.5rem; }
+    }
+  </style>
+</head>
+<body class="antialiased">
+
+  <!-- NAV -->
+  <nav id="main-nav" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300" data-scrolled="false">
+    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      <a href="index.html" class="nav-logo font-display text-2xl transition-colors italic">Sahipkıran</a>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#dunya" class="nav-link font-body text-sm transition-colors font-medium tracking-wide">Dünya</a>
+        <a href="#bolgeler" class="nav-link font-body text-sm transition-colors font-medium tracking-wide">Bölgeler</a>
+        <a href="#tarih" class="nav-link font-body text-sm transition-colors font-medium tracking-wide">Tarih</a>
+        <a href="#kavimler" class="nav-link font-body text-sm transition-colors font-medium tracking-wide">Kavimler</a>
+        <a href="files/sahipkiran-afsunkuf.pdf" class="cta-primary nav-cta" style="padding:0.5rem 1.3rem; font-size:0.72rem; background:#9b2226;">İndir</a>
+      </div>
+      <button id="mobile-menu-btn" class="md:hidden nav-link transition-colors" aria-label="Menü">
+        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+      </button>
+    </div>
+    <div id="mobile-menu" class="hidden md:hidden border-t border-white/10 bg-black/80 backdrop-blur-md px-6 py-4 space-y-4">
+      <a href="#dunya" class="block font-body text-sm text-white/70 hover:text-white font-medium">Dünya</a>
+      <a href="#bolgeler" class="block font-body text-sm text-white/70 hover:text-white font-medium">Bölgeler</a>
+      <a href="#tarih" class="block font-body text-sm text-white/70 hover:text-white font-medium">Tarih</a>
+      <a href="#kavimler" class="block font-body text-sm text-white/70 hover:text-white font-medium">Kavimler</a>
+    </div>
+  </nav>
+
+
+  <!-- ============================================= -->
+  <!-- HERO — Full bleed with map background -->
+  <!-- ============================================= -->
+  <section class="relative min-h-[90vh] flex items-end pb-20 pt-32 overflow-hidden">
+    <!-- PLACEHOLDER: Arkea Dünya Haritası — Arka plan olarak kullanılacak -->
+    <!-- Görseli eklemek için: style="background-image: url('images/arkea-harita.png')" -->
+    <div class="absolute inset-0 bg-cover bg-center bg-no-repeat" style="background-image: url('images/arkea-harita.png'); background-color: #2a2520;"></div>
+    <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-black/40 to-black/25"></div>
+    <div class="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-black/50 to-transparent"></div>
+
+    <div class="relative z-10 max-w-6xl mx-auto px-6 w-full">
+      <div class="max-w-2xl reveal">
+        <p class="font-body text-xs tracking-[0.25em] uppercase text-crimson font-bold mb-5" style="color:#e85d5d;">Fantastik Eklenti</p>
+        <h1 class="font-display text-5xl sm:text-6xl lg:text-7xl text-white leading-[0.95] mb-6 italic drop-shadow-lg font-bold">
+          Afsunküf
+        </h1>
+        <p class="font-display text-xl sm:text-2xl text-white/70 italic mb-6">Arkea Çağı</p>
+        <p class="font-body text-base text-white/55 leading-relaxed mb-10 max-w-md">
+          Büyücüler tılsım örer, nekromanserler ölüleri diriltir, dev yaratıklar savaş alanını kasıp kavurur. Arkea dünyasına hoş geldiniz.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-3">
+          <a href="files/sahipkiran-afsunkuf.pdf" class="cta-primary" style="background:#fff; color:#1a1917;">
+            <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14m0 0l-6-6m6 6l6-6"/></svg>
+            Eklentiyi İndir
+          </a>
+          <a href="#dunya" class="cta-secondary" style="color:#fff; border-color:rgba(255,255,255,0.25);">
+            Dünyayı Keşfet
+          </a>
+        </div>
+      </div>
+    </div>
+    <div class="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent"></div>
+  </section>
+
+
+  <!-- ============================================= -->
+  <!-- ARKEA DÜNYASI — Intro -->
+  <!-- ============================================= -->
+  <section id="dunya" class="py-20 lg:py-28">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="grid lg:grid-cols-2 gap-12 lg:gap-20 items-center">
+        <div class="reveal">
+          <p class="font-body text-xs tracking-[0.25em] uppercase text-crimson font-bold mb-3">Arkea Dünyası</p>
+          <h2 class="font-display text-4xl sm:text-5xl text-ink italic mb-6">Söylenceler, Efsaneler ve Sırlar</h2>
+          <p class="font-body text-base text-inksoft leading-relaxed mb-4">
+            Arkea, Samanyolu galaksisinde Dış Kol'da bir yerde bulunan Dünya benzeri bir gezegendir. Etrafı saran bir okyanusla çevrili üç kıtadan oluşan ve farklı kültürlerin yaşadığı Arkea; söylenceler, efsane ve sırlarla dolu geniş bir dünyadır.
+          </p>
+          <p class="font-body text-base text-inksoft leading-relaxed mb-4">
+            Arkea dünyasının vazgeçilmezi olan <strong class="text-ink">afsunküf</strong>, karanlık korularda, donmuş mağaralarda veya dağların zirvelerinde yetişen bir mantar türüdür. Onları yiyenlere garip güçler bahşedilir, ancak delilik, çarpılma ya da ilahlar tarafından bellenme riski vardır.
+          </p>
+          <p class="font-body text-base text-inkfade leading-relaxed">
+            Beş kavim — insanlar, elfler, cüceler, orklar ve goblinler — farklı bölgelere dağılmıştır. Uygarlık, kendi dünyamızdaki Kavimler Göçü Dönemine (MS 300–600) benzer bir yerde bulunmaktadır.
+          </p>
+        </div>
+        <div class="reveal" style="transition-delay:0.15s;">
+          <!-- Epigraph card -->
+          <div class="bg-subtle border border-muted rounded-sm p-8 lg:p-10">
+            <svg class="text-crimson/30 mb-4" width="32" height="32" viewBox="0 0 24 24" fill="currentColor"><path d="M6 17h3l2-4V7H5v6h3zm8 0h3l2-4V7h-6v6h3z"/></svg>
+            <p class="font-display text-xl text-ink italic leading-relaxed mb-4">
+              Bazıları afsunküfün ilahların bir lütfu olduğunu söylerken, bazı kimseler ise bunun çoktan unutulmuş kadim güçlerin laneti olduğunu fısıldamaktadır.
+            </p>
+            <p class="font-body text-xs text-inkghost tracking-wide uppercase font-bold">Arkea Söylenceleri</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- DIVIDER -->
+  <div class="max-w-5xl mx-auto px-6"><div class="divider-line"><span class="text-inkghost font-display">·</span></div></div>
+
+
+  <!-- ============================================= -->
+  <!-- BÖLGELER -->
+  <!-- ============================================= -->
+  <section id="bolgeler" class="py-20 lg:py-28">
+    <div class="max-w-6xl mx-auto px-6">
+
+      <div class="text-center mb-16 reveal">
+        <p class="font-body text-xs tracking-[0.25em] uppercase text-crimson font-bold mb-3">Coğrafya</p>
+        <h2 class="font-display text-4xl sm:text-5xl text-ink italic">Arkea'nın Bölgeleri</h2>
+        <p class="font-body text-base text-inkfade mt-5 max-w-xl mx-auto leading-relaxed">Üç kıtaya yayılan on bölge. Her biri kendi kültürünü, tehlikelerini ve fırsatlarını barındırır.</p>
+      </div>
+
+      <!-- Row 1: Human lands -->
+      <p class="font-body text-xs tracking-[0.25em] uppercase text-gold font-bold mb-4 reveal">İnsan Toprakları</p>
+      <div class="grid md:grid-cols-3 gap-5 mb-10">
+        <div class="region-card bg-white p-6 reveal">
+          <h3 class="font-display text-xl text-ink font-bold mb-2">Baktriya</h3>
+          <p class="font-body text-xs text-crimson font-bold tracking-wide uppercase mb-3">İnsan Anavatanı</p>
+          <p class="font-body text-sm text-inksoft leading-relaxed">Atlı göçebelerin yurdu, ticaret yollarının kavşağı. Geniş otlaklar ve yaprak döken ormanlarla çevrili ılıman bir coğrafya. Yüzlerce şehir devleti, krallık ve konfederasyona ev sahipliği yapar.</p>
+        </div>
+        <div class="region-card bg-white p-6 reveal" style="transition-delay:0.08s;">
+          <h3 class="font-display text-xl text-ink font-bold mb-2">Butuan</h3>
+          <p class="font-body text-xs text-crimson font-bold tracking-wide uppercase mb-3">Kuzey Kıyı Devletleri</p>
+          <p class="font-body text-sm text-inksoft leading-relaxed">Sık ormanlarla kaplı kuzey kıyısı. Çetin avcılar, balıkçılar ve geyik çobanlarıyla tanınan animistik bir halk. Goblin akınlarıyla boğuşan batı, ticarete açılan doğu.</p>
+        </div>
+        <div class="region-card bg-white p-6 reveal" style="transition-delay:0.16s;">
+          <h3 class="font-display text-xl text-ink font-bold mb-2">Kutay</h3>
+          <p class="font-body text-xs text-crimson font-bold tracking-wide uppercase mb-3">İnsan-Elf Alaşımı</p>
+          <p class="font-body text-sm text-inksoft leading-relaxed">Tropikal iklimli ormanlar ve sulak alanlar. Göçebe Baktriyalıların elf tarım kültürüyle karışarak oluşturduğu benzersiz bir uygarlık. Paralı askerlikten krallığa yükselen bir halk.</p>
+        </div>
+      </div>
+
+      <!-- Row 2: Elf lands -->
+      <p class="font-body text-xs tracking-[0.25em] uppercase text-gold font-bold mb-4 reveal">Elf Toprakları</p>
+      <div class="grid md:grid-cols-3 gap-5 mb-10">
+        <div class="region-card bg-white p-6 reveal">
+          <h3 class="font-display text-xl text-ink font-bold mb-2">Altınkıyı</h3>
+          <p class="font-body text-xs text-crimson font-bold tracking-wide uppercase mb-3">Elf Medeniyetinin Kalbi</p>
+          <p class="font-body text-sm text-inksoft leading-relaxed">Elf kavminin anavatanı. Surları fersahlarca uzanan görkemli başkent Yeşimkent, kıtalara yayılan ticaret yollarının başlangıcıdır. Askeri ve ticari denizcilik uygarlığı.</p>
+        </div>
+        <div class="region-card bg-white p-6 reveal" style="transition-delay:0.08s;">
+          <h3 class="font-display text-xl text-ink font-bold mb-2">Kham</h3>
+          <p class="font-body text-xs text-crimson font-bold tracking-wide uppercase mb-3">Elf Yarımadası</p>
+          <p class="font-body text-sm text-inksoft leading-relaxed">Sarı Deniz boyunca uzanan yarımada. Çeltik tarımı, animizm ve şamanizm. Tatlısu gölü etrafında şekillenen ticaret yolları ve yerleşimler.</p>
+        </div>
+        <div class="region-card bg-white p-6 reveal" style="transition-delay:0.16s;">
+          <h3 class="font-display text-xl text-ink font-bold mb-2">Geşur</h3>
+          <p class="font-body text-xs text-crimson font-bold tracking-wide uppercase mb-3">Uzak Elf Toprakları</p>
+          <p class="font-body text-sm text-inksoft leading-relaxed">Okyanusun ötesinde yayılan geniş topraklar. Avcı-toplayıcılardan imparatorluklara kadar çeşitlilik gösteren kabileler. Elf yayıyla tanınan vahşi savaşçılar.</p>
+        </div>
+      </div>
+
+      <!-- Row 3: Dwarf lands -->
+      <p class="font-body text-xs tracking-[0.25em] uppercase text-gold font-bold mb-4 reveal">Cüce Toprakları</p>
+      <div class="grid md:grid-cols-2 gap-5 mb-10">
+        <div class="region-card bg-white p-6 reveal">
+          <h3 class="font-display text-xl text-ink font-bold mb-2">Ofir</h3>
+          <p class="font-body text-xs text-crimson font-bold tracking-wide uppercase mb-3">Deniz İmparatorluğu</p>
+          <p class="font-body text-sm text-inksoft leading-relaxed">Cücelerin anavatanı. Ticarete dayalı bağımsız şehir devletleri, uzman gemi inşacıları ve gökcevher tüccarları. Hükümdarlar için görkemli mezarlar inşa eden, kan ve vecd törenleriyle tanınan bir inanç sistemi.</p>
+        </div>
+        <div class="region-card bg-white p-6 reveal" style="transition-delay:0.08s;">
+          <h3 class="font-display text-xl text-ink font-bold mb-2">Başmur</h3>
+          <p class="font-body text-xs text-crimson font-bold tracking-wide uppercase mb-3">Kentsel Uygarlık</p>
+          <p class="font-body text-sm text-inksoft leading-relaxed">Denize kıyısı olmayan cüce toprakları. Eğitim, bilim ve felsefe açısından zengin bir kent kültürü. Ofir'in aksine anıtsal mezarlar inşa etmeyen, açık hava törenlerini tercih eden bir halk.</p>
+        </div>
+      </div>
+
+      <!-- Row 4: Orc & Goblin lands -->
+      <p class="font-body text-xs tracking-[0.25em] uppercase text-gold font-bold mb-4 reveal">Ork & Goblin Toprakları</p>
+      <div class="grid md:grid-cols-2 gap-5">
+        <div class="region-card bg-white p-6 reveal">
+          <h3 class="font-display text-xl text-ink font-bold mb-2">Aryana</h3>
+          <p class="font-body text-xs text-crimson font-bold tracking-wide uppercase mb-3">Ork & Goblin Yurdu</p>
+          <p class="font-body text-sm text-inksoft leading-relaxed">Kıta büyüklüğünde bir yarımada. Güneyde orklar, kuzeyde goblinler. Kabile savaşları, yağma akınları ve nemeton sunu yerleri. İki kavmin melezi hobgoblinlerin ortaya çıktığı topraklar.</p>
+        </div>
+        <div class="region-card bg-white p-6 reveal" style="transition-delay:0.08s;">
+          <h3 class="font-display text-xl text-ink font-bold mb-2">Arakyosa</h3>
+          <p class="font-body text-xs text-crimson font-bold tracking-wide uppercase mb-3">Ork Anavatanı</p>
+          <p class="font-body text-sm text-inksoft leading-relaxed">Ork kavminin doğduğu kıta. Avcı-toplayıcı kabileler, animist inanç ve kutsal korular. Ork bilgeleri, Arkea'nın içi boş merkezinden yeryüzüne geldiklerini anlatır.</p>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- DIVIDER -->
+  <div class="max-w-5xl mx-auto px-6"><div class="divider-line"><span class="text-inkghost font-display">·</span></div></div>
+
+
+  <!-- ============================================= -->
+  <!-- TARİH -->
+  <!-- ============================================= -->
+  <section id="tarih" class="py-20 lg:py-28">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="grid lg:grid-cols-5 gap-12 lg:gap-16">
+
+        <!-- Left: Heading -->
+        <div class="lg:col-span-2 reveal">
+          <p class="font-body text-xs tracking-[0.25em] uppercase text-crimson font-bold mb-3">Zaman Çizelgesi</p>
+          <h2 class="font-display text-4xl sm:text-5xl text-ink italic mb-6">Arkea Çağı Tarihi</h2>
+          <p class="font-body text-base text-inkfade leading-relaxed mb-6">On üç bin yıl süren uygarlıklar, göçler, imparatorluklar ve çöküşler. Tarihler "Günümüzden Önce" (GÖ) olarak verilmiştir.</p>
+          <div class="bg-subtle border border-muted rounded-sm p-5">
+            <p class="font-display text-sm text-ink italic leading-relaxed">
+              "Rasnan harabelerinden küçük krallıklar yükselmektedir, afsunlu cadılar diyarlara yayılmıştır."
+            </p>
+            <p class="font-body text-xs text-inkghost mt-2 font-bold tracking-wide uppercase">— Günümüz</p>
+          </div>
+        </div>
+
+        <!-- Right: Timeline -->
+        <div class="lg:col-span-3 reveal" style="transition-delay:0.1s;">
+          <div class="bg-subtle border border-muted rounded-sm p-5 lg:p-6">
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5" style="white-space:nowrap;">GÖ 13.000</span><span class="font-body text-sm text-inksoft"><strong class="text-ink">Büyük Çağ başladı</strong> — afsunküfün donmuş mağaralardan belirişi</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 3.500</span><span class="font-body text-sm text-inksoft">İlk elfler Geşur'a doğru genişledi</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 3.300</span><span class="font-body text-sm text-inksoft"><strong class="text-ink">Büyük Ofir Krallığı</strong> kuruldu (Eski Krallık)</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 3.000</span><span class="font-body text-sm text-inksoft">Aryana'da erken dönem goblin krallıkları</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 2.500</span><span class="font-body text-sm text-inksoft">Ofir iç savaşla parçalandı</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 2.300</span><span class="font-body text-sm text-inksoft"><strong class="text-ink">Ofir'in Yeniden Birleşmesi</strong> · Geşur'daki ilk elf krallıkları</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 2.000</span><span class="font-body text-sm text-inksoft">İlk elf hanedanı Altınkıyı'da kuruldu</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 1.800</span><span class="font-body text-sm text-inksoft"><strong class="text-ink">Ofirya İmparatorluğu</strong> (Yeni Krallık)</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 1.300</span><span class="font-body text-sm text-inksoft">Elf İmparatorlukları Geşur ve Arakyosa'da genişledi</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 1.000</span><span class="font-body text-sm text-inksoft"><strong class="text-ink">Rasnan Krallığı</strong> kuruldu · İnsanlar Altınkıyı ve Kutay'a yayıldı</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 950</span><span class="font-body text-sm text-inksoft">Ork konfederasyonları Arakyosa'da birleşti</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 900</span><span class="font-body text-sm text-inksoft">Başmurya'nın Ofir'i fethi</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 830</span><span class="font-body text-sm text-inksoft"><strong class="text-ink">Ork seferleri</strong> Ofir, Aryana ve Baktriya'yı yakıp yıktı</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 800</span><span class="font-body text-sm text-inksoft">Rasnan genişlemesi: Ofir, Aryana ve Arakyosa'da fetihler</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 700</span><span class="font-body text-sm text-inksoft">Altınkıyı'da <strong class="text-ink">savaşan devletler dönemi</strong></span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 600</span><span class="font-body text-sm text-inksoft">Baktriya ve Ofir'e ork ve goblin göçleri</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 500</span><span class="font-body text-sm text-inksoft">Elflerin Kham'a genişlemesi — <strong class="text-ink">zirve dönemi</strong></span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 400</span><span class="font-body text-sm text-inksoft">İnsanların Baktriya'dan batıya ilerlemesi</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 300</span><span class="font-body text-sm text-inksoft">Kutay'ın elfler tarafından istilası</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 200</span><span class="font-body text-sm text-inksoft">Elflerin Kutay'dan kovulması</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 150</span><span class="font-body text-sm text-inksoft">Goblinlerin Kehribarkıyı'ya genişlemesi</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-gold font-bold text-right pt-0.5">GÖ 100</span><span class="font-body text-sm text-inksoft"><strong class="text-ink">Rasnan İmparatorluğu</strong>'nun çöküşü</span></div>
+            <div class="tl-row"><span class="font-body text-xs text-crimson font-bold text-right pt-0.5">Günümüz</span><span class="font-body text-sm text-ink font-semibold">Harabelerden krallıklar yükselir, afsunlu cadılar diyarlara yayılır</span></div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- DIVIDER -->
+  <div class="max-w-5xl mx-auto px-6"><div class="divider-line"><span class="text-inkghost font-display">·</span></div></div>
+
+
+  <!-- ============================================= -->
+  <!-- KAVİMLER -->
+  <!-- ============================================= -->
+  <section id="kavimler" class="py-20 lg:py-28">
+    <div class="max-w-6xl mx-auto px-6">
+
+      <div class="text-center mb-16 reveal">
+        <p class="font-body text-xs tracking-[0.25em] uppercase text-crimson font-bold mb-3">Arkea Orduları</p>
+        <h2 class="font-display text-4xl sm:text-5xl text-ink italic">Beş Kavim</h2>
+        <p class="font-body text-base text-inkfade mt-5 max-w-xl mx-auto leading-relaxed">Her kavmin kendine özgü kültürü, savaş biçimi ve kaderinin peşinde koştuğu bir dünya.</p>
+      </div>
+
+      <!-- Race cards grid -->
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+        <!-- İnsanlar -->
+        <div class="race-card bg-white reveal">
+          <!-- PLACEHOLDER: İnsan kavim görseli — images/kavim-insan.png — 16:9 -->
+          <img src="images/kavim-insan.png" alt="İnsanlar" class="w-full aspect-video object-cover border-b border-muted" />
+          <div class="p-6">
+            <p class="font-body text-xs text-gold font-bold tracking-[0.2em] uppercase mb-2">Baktriya · Butuan · Kutay</p>
+            <h3 class="font-display text-2xl text-ink font-bold mb-3">İnsanlar</h3>
+            <p class="font-body text-sm text-inksoft leading-relaxed">En uyumlu ve dirençli kavim. Büyük ordular kurar, kıtalar boyunca at sürer, denizlere açılır. Atlı göçebelerden yerleşik krallıklara uzanan bir çeşitlilik.</p>
+          </div>
+        </div>
+
+        <!-- Elfler -->
+        <div class="race-card bg-white reveal" style="transition-delay:0.08s;">
+          <!-- PLACEHOLDER: Elf kavim görseli — images/kavim-elf.png — 16:9 -->
+          <img src="images/kavim-elf.png" alt="İnsanlar" class="w-full aspect-video object-cover border-b border-muted" />
+          <div class="p-6">
+            <p class="font-body text-xs text-gold font-bold tracking-[0.2em] uppercase mb-2">Altınkıyı · Kham · Geşur</p>
+            <h3 class="font-display text-2xl text-ink font-bold mb-3">Elfler</h3>
+            <p class="font-body text-sm text-inksoft leading-relaxed">En gelişmiş medeniyet ve kültüre sahip en eski kavim. Yeşimkent'in görkemli surlarından Geşur'un vahşi okçularına kadar uzanan bir yelpaze.</p>
+          </div>
+        </div>
+
+        <!-- Cüceler -->
+        <div class="race-card bg-white reveal" style="transition-delay:0.16s;">
+          <!-- PLACEHOLDER: Cüce kavim görseli — images/kavim-cuce.png — 16:9 -->
+          <img src="images/kavim-cuce.png" alt="İnsanlar" class="w-full aspect-video object-cover border-b border-muted" />
+          <div class="p-6">
+            <p class="font-body text-xs text-gold font-bold tracking-[0.2em] uppercase mb-2">Ofir · Başmur</p>
+            <h3 class="font-display text-2xl text-ink font-bold mb-3">Cüceler</h3>
+            <p class="font-body text-sm text-inksoft leading-relaxed">Zanaatkâr işçilikleri ve cesur denizcileriyle en eski uygarlıklardan biri. Ticaret imparatorlukları, gökcevher tüccarları ve görkemli mezar gelenekleri.</p>
+          </div>
+        </div>
+
+        <!-- Goblinler -->
+        <div class="race-card bg-white reveal">
+          <!-- PLACEHOLDER: Goblin kavim görseli — images/kavim-goblin.png — 16:9 -->
+          <img src="images/kavim-goblin.png" alt="İnsanlar" class="w-full aspect-video object-cover border-b border-muted" />
+          <div class="p-6">
+            <p class="font-body text-xs text-gold font-bold tracking-[0.2em] uppercase mb-2">Aryana · Kehribarkıyı</p>
+            <h3 class="font-display text-2xl text-ink font-bold mb-3">Goblinler</h3>
+            <p class="font-body text-sm text-inksoft leading-relaxed">Yağmacı deniz akınları, kabile savaşları ve nemeton sunu yerleri. Druid liderleri, köle ticareti ve orklara karşı amansız bir nefret.</p>
+          </div>
+        </div>
+
+        <!-- Orklar -->
+        <div class="race-card bg-white reveal" style="transition-delay:0.08s;">
+          <!-- PLACEHOLDER: Ork kavim görseli — images/kavim-ork.png — 16:9 -->
+          <img src="images/kavim-ork.png" alt="İnsanlar" class="w-full aspect-video object-cover border-b border-muted" />
+          <div class="p-6">
+            <p class="font-body text-xs text-gold font-bold tracking-[0.2em] uppercase mb-2">Arakyosa · Aryana</p>
+            <h3 class="font-display text-2xl text-ink font-bold mb-3">Orklar</h3>
+            <p class="font-body text-sm text-inksoft leading-relaxed">En vahşi ve saldırgan kavim. Yeraltı Kapılarının bilgisini kaybetmiş, dünya yüzeyinde dolaşmakla lanetlenmiş acımasız kabile savaşçıları.</p>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ============================================= -->
+  <!-- CTA BAND -->
+  <!-- ============================================= -->
+  <section class="py-20 bg-ink relative overflow-hidden">
+    <div class="absolute inset-0 opacity-[0.03]" style="background-image: url('data:image/svg+xml,%3Csvg viewBox=%220 0 256 256%22 xmlns=%22http://www.w3.org/2000/svg%22%3E%3Cfilter id=%22n%22%3E%3CfeTurbulence type=%22fractalNoise%22 baseFrequency=%220.85%22 numOctaves=%224%22 stitchTiles=%22stitch%22/%3E%3C/filter%3E%3Crect width=%22100%25%22 height=%22100%25%22 filter=%22url(%23n)%22/%3E%3C/svg%3E'); background-size: 200px;"></div>
+    <div class="relative z-10 max-w-3xl mx-auto px-6 text-center reveal">
+      <h2 class="font-display text-4xl sm:text-5xl text-white italic mb-4">Arkea Seni Bekliyor</h2>
+      <p class="font-body text-base text-white/60 mb-10 max-w-xl mx-auto leading-relaxed">Afsunküf eklentisini indir, Kılıç & Kalkan veya Top & Tüfek ile birleştir ve fantastik savaşlara başla.</p>
+      <div class="flex flex-col sm:flex-row gap-3 justify-center">
+        <a href="files/sahipkiran-afsunkuf.pdf" class="cta-primary" style="background:#fff; color:#1a1917;">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5v14m0 0l-6-6m6 6l6-6"/></svg>
+          Afsunküf'ü İndir
+        </a>
+        <a href="index.html" class="cta-secondary" style="color:#fff; border-color:rgba(255,255,255,0.2);">
+          ← Ana Sayfaya Dön
+        </a>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- FOOTER -->
+  <footer class="border-t border-muted py-10 bg-subtle">
+    <div class="max-w-6xl mx-auto px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="font-body text-xs text-inkghost">© 2026 Sahipkıran. CC BY-SA 4.0</p>
+      <div class="flex items-center gap-5">
+        <a href="index.html" class="footer-link text-xs">Ana Sayfa</a>
+        <a href="srd.html" class="footer-link text-xs">SRD</a>
+        <a href="faq.html" class="footer-link text-xs">SSS</a>
+        <a href="#" class="footer-link text-xs">GitHub</a>
+      </div>
+    </div>
+  </footer>
+
+
+  <!-- SCRIPTS -->
+  <script>
+    const menuBtn = document.getElementById('mobile-menu-btn');
+    const mobileMenu = document.getElementById('mobile-menu');
+    menuBtn.addEventListener('click', () => mobileMenu.classList.toggle('hidden'));
+    mobileMenu.querySelectorAll('a').forEach(link => {
+      link.addEventListener('click', () => mobileMenu.classList.add('hidden'));
+    });
+
+    const nav = document.getElementById('main-nav');
+    function updateNav() {
+      nav.dataset.scrolled = window.scrollY > window.innerHeight * 0.6 ? 'true' : 'false';
+    }
+    window.addEventListener('scroll', updateNav, { passive: true });
+    updateNav();
+
+    const revealEls = document.querySelectorAll('.reveal');
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          observer.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+    revealEls.forEach(el => observer.observe(el));
+  </script>
+
+</body>
+</html>
