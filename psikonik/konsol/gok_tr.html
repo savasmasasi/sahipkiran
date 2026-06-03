@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GÖK Birim Üreteci</title>
+    <style>
+        /* --- RETRO MILITARY DATABASE STYLE --- */
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --phosphor: #33ff33; 
+            --dim: #1a881a;
+            --alert: #ff3333;
+            --accent: #ffcc00; /* Amber */
+            --bg: #050505;
+            --panel: rgba(0, 15, 0, 0.9);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--phosphor);
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            margin: 0;
+            padding: 20px;
+            height: 100vh;
+            overflow-y: auto;
+            text-shadow: 0 0 2px var(--dim);
+        }
+
+        /* Scanline Overlay */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
+            background-size: 100% 3px, 6px 100%;
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            border: 2px solid var(--phosphor);
+            box-shadow: 0 0 15px var(--dim) inset;
+            min-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            background: #000;
+        }
+
+        /* Header */
+        header {
+            background: var(--phosphor);
+            color: #000;
+            padding: 10px;
+            text-align: center;
+            font-size: 1.6rem;
+            letter-spacing: 4px;
+            font-weight: bold;
+            border-bottom: 2px solid var(--phosphor);
+        }
+
+        .sub-header {
+            font-size: 0.9rem;
+            text-align: right;
+            padding: 5px 10px;
+            border-bottom: 1px solid var(--dim);
+            color: var(--dim);
+        }
+
+        /* Controls */
+        .controls {
+            padding: 20px;
+            text-align: center;
+            border-bottom: 2px solid var(--phosphor);
+            background: rgba(0, 20, 0, 0.5);
+        }
+
+        button {
+            background: #000;
+            color: var(--phosphor);
+            border: 2px solid var(--phosphor);
+            font-family: 'VT323', monospace;
+            font-size: 1.4rem;
+            padding: 10px 40px;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 0 5px var(--dim);
+            transition: 0.2s;
+        }
+        button:hover {
+            background: var(--phosphor);
+            color: #000;
+            box-shadow: 0 0 20px var(--phosphor);
+        }
+
+        /* Data Display */
+        #output-area {
+            padding: 20px;
+            flex-grow: 1;
+            display: none; /* Hidden until generated */
+        }
+
+        /* Grid Layout for Profile */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 700px) {
+            .profile-grid { grid-template-columns: 1fr; }
+        }
+
+        .section {
+            border: 1px solid var(--dim);
+            padding: 15px;
+            position: relative;
+            background: rgba(0, 10, 0, 0.4);
+        }
+
+        .section-title {
+            position: absolute;
+            top: -12px;
+            left: 10px;
+            background: #000;
+            padding: 0 5px;
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 0.9rem;
+            border: 1px solid var(--dim);
+        }
+
+        .data-row {
+            margin-bottom: 8px;
+            border-bottom: 1px dashed #113311;
+            padding-bottom: 4px;
+        }
+        .data-row:last-child { border-bottom: none; }
+
+        .label { color: var(--dim); font-size: 0.85em; text-transform: uppercase; display: block; }
+        .value { font-size: 1.2em; font-weight: bold; color: var(--phosphor); line-height: 1.1; }
+        .detail { font-size: 0.9em; font-style: italic; color: #aaa; display: block; margin-top: 4px; line-height: 1.2; }
+
+        .full-width { grid-column: 1 / -1; }
+
+        /* Flaw Badge */
+        .flaw-box {
+            border: 2px solid var(--alert);
+            color: var(--alert);
+            padding: 15px;
+            margin-top: 20px;
+            text-align: center;
+            background: rgba(50, 0, 0, 0.1);
+        }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .fade-in { animation: fadeIn 0.5s ease-in; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>GÖK KAYIT ARŞİVİ</header>
+    <div class="sub-header">ERİŞİM SEVİYESİ: SOLARK-ONAY // TERMİNAL 892-B</div>
+
+    <div class="controls">
+        <button onclick="generateGOK()">[ BİRİM DOSYASINI GETİR ]</button>
+    </div>
+
+    <div id="output-area" class="fade-in">
+        </div>
+</div>
+
+<script>
+    // --- DICE UTILS ---
+    const d = (sides) => Math.floor(Math.random() * sides) + 1;
+    
+    // --- DATA TABLES ---
+
+    const civilizations = [
+        "Telluryan (Sağlam temelli, bürokratik, savunma odaklı)",
+        "Arenyan (Savaşçı, görev bilincine sahip, düellocu)",
+        "Veneryan (Diplomatik, kentli, sivil işbirlikçi)",
+        "Kaelyan (Soyut, doktriner, yarı dini)",
+        "Jovyan (Genişlemeci, otoriter, ağır teçhizat odaklı)",
+        "Diğer/Bilinmiyor (Senkretik, sapkın, ayrılıkçı veya belirsiz)"
+    ];
+
+    const origins = [
+        { t: "Solarkist Devrim (3. binyıl)", d: "İdeolojik tasfiyeler ve kurumsal çöküşün ortasında kuruldu; kurucu mitlerle doludur." },
+        { t: "Raşidun Dönemi (3-4. binyıl)", d: "Hızlı bir konsolidasyon sırasında kuruldu; birlik, doktrin ve inançta doğruluk ve meşruiyeti vurgular." },
+        { t: "İlk Fitne (4. Binyılın başları)", d: "İç çatışmada doğdu; ihanet, bölünme veya iç savaşla tanımlanır." },
+        { t: "Eksen Çağı (4. binyıl)", d: "Reform ve kodifikasyon sırasında kuruldu; doktrin ve yorumlar açısından zengindir." },
+        { t: "İkinci Fitne (5. binyıl)", d: "Acil durum gücü olarak kuruldu; acımasız isyan bastırma veya baskının izlerini taşır." },
+        { t: "Diğer/bilinmiyor", d: "Kayıtlar mühürlenmiş, kaybolmuş veya tahrif edilmiş; kökeni tartışmalı veya siyasi açıdan hassas." }
+    ];
+
+    const strengths = [
+        "TEHLİKE ALTINDA (Personel eksikliği, lojistik sorunlar)",
+        "GÜÇSÜZ (Bütçe kesintileri, eski teknoloji)",
+        "GÜÇSÜZ (Bütçe kesintileri, eski teknoloji)",
+        "NORMAL (Faaliyette ve savaşa hazır)",
+        "NORMAL (Faaliyette ve savaşa hazır)",
+        "GÜÇLÜ (Yüksek bütçe, son teknoloji, siyasi destek)"
+    ];
+
+    const alliesList = [
+        "Psikonik İşleri Başkanlığı",
+        "Çevirmenler Konseyi",
+        "Şemsiyet Prokurasisi",
+        "Güneş Jandarması",
+        "Yerel Savunma Kuvvetleri",
+        "Özel Amaçlı Şirketler"
+    ];
+
+    const enemiesList = [
+        "Eloi", "Morlok", "Entomon", "Kitinsan", "Başka bir GÖK", "KARIŞIK (İki kez zar atın)"
+    ];
+
+    const achievements = [
+        { t: "Bir Sektörün Bastırılması", d: "Uzun süren bir isyanı, tarikat ayaklanmasını veya gezegensel bölünmeyi başarıyla bastırdı." },
+        { t: "Psikonik İhlalin Kontrolü", d: "Kontrolsüz bir psişik olayın, anomali veya varlığın yayılmasını engelledi." },
+        { t: "Denk Bir Güce Karşı Zafer", d: "Açık çatışmada başka bir GÖK veya eşdeğer bir oluşumu yendi." },
+        { t: "Stratejik Bir Dünyanın Savunması", d: "Tüm zorluklara rağmen önemli bir gezegeni, istasyonu veya altyapı merkezini elinde tuttu." },
+        { t: "İnsan Dışı Saldırının Bastırılması", d: "Eloi, morlok, entomon veya kitinsan ilerleyişini durdurmada merkezi bir rol oynadı." },
+        { t: "Doktrinsel Emsal", d: "Eylemleri daha sonra yeni yasalar, doktrinler veya reformlar için gerekçe olarak gösterildi." }
+    ];
+
+    const defeats = [
+        { t: "Felaket Niteliğinde Kayıplar", d: "Tek bir seferde veya çatışmada gücünün büyük bir kısmını kaybetti." },
+        { t: "Kamuoyunda Başarısızlık", d: "GÖK'ün itibarını veya siyasi konumunu zedeleyecek kadar göze çarpan bir yenilgi." },
+        { t: "İç Çöküş", d: "Operasyonlar sırasında isyan, bölünme veya toplu firar yaşandı." },
+        { t: "Stratejik Geri Çekilme", d: "Tutulması çok maliyetli görülen bir dünya veya hedef terk edildi." },
+        { t: "Psikolojik Kirlenme", d: "Psişik müdahale, yozlaşma veya maruz kalma nedeniyle operasyonlar tehlikeye girmiştir." },
+        { t: "Sansürlenmiş Yenilgi", d: "Resmi kayıtlar eksik, değiştirilmiş veya üst makamlar tarafından mühürlenmiştir." }
+    ];
+
+    const legends = [
+        { t: "İsimsiz Komutan", d: "Kimliği silinmiş, ancak emirleri hala dillerde olan bir lider." },
+        { t: "Son Direniş", d: "Yok olana kadar savaşan bir birim; ayrıntılar kaynağa göre değişir." },
+        { t: "Yasaklı Emir", d: "Verilen, ancak daha sonra reddedilen, yine de amacına ulaşan bir emir." },
+        { t: "Sessiz Zafer", d: "Resmi olarak reddedilen, ancak etkileri açık olan bir operasyon." },
+        { t: "Hain-Aziz", d: "Bazıları tarafından hain, diğerleri tarafından kahraman olarak görülen bir subay." },
+        { t: "Kayıp Sancak", d: "Savaşta kaybolan bir kalıntı veya simge; geri alınması bir saplantı haline gelmiştir." }
+    ];
+
+    const flaws = [
+        { t: "Doktrinsel Katılık", d: "Öngörülebilir taktikler, sağlam düzen disiplini, zayıf adaptasyon. GÖK, modası geçmiş veya tartışmalı doktrinlere sıkı sıkıya bağlıdır. Taktik olarak mantıklı olsa bile sapmalar cezalandırılır." },
+        { t: "Siyasete Fazlasıyla Maruz Kalma", d: "Sık sık müdahale, ani görev değişiklikleri veya çelişkili emirler. Birim, sivil otoriteler, bakanlıklar veya ideolojik kurumlarla yoğun bir şekilde iç içe geçmiştir." },
+        { t: "Kıdemlilerin Hakimiyeti", d: "Deneyimli liderlik, ancak içsel hoşnutsuzluk ve yavaş reform. Uzun süredir görev yapan küçük bir subay kadrosu komutayı domine eder ve yeni personeli kenara iter." },
+        { t: "Kronik Yetersiz Finansman", d: "Modası geçmiş ekipman, hurdalıktan toplama. Önemine rağmen, GÖK bütçe ve lojistik konusunda sürekli olarak öncelik dışı bırakılmaktadır." },
+        { t: "İtibar Takıntısı", d: "Riskten kaçınan davranışlar veya onuru geri kazanmak için pervasız girişimler. GÖK, kamuoyundaki imajı konusunda son derece hassastır." },
+        { t: "İdeolojik Bölünme", d: "Rekabet halindeki hizipler, güvenilmez koordinasyon. Birim, siyasi, dini veya doktrinsel çizgilerle içten bölünmüştür." }
+    ];
+
+    // --- GENERATOR LOGIC ---
+
+    function getEnemies() {
+        let r = d(6);
+        // If roll is 1-5, return that enemy
+        if (r < 6) return enemiesList[r-1];
+        
+        // If 6, roll Mixed (generate two distinct enemies)
+        let e1 = enemiesList[d(5)-1];
+        let e2 = enemiesList[d(5)-1];
+        
+        // If rolled the same enemy twice in mixed mode
+        if(e1 === e2) return `Büyük Kan Davası: ${e1}`;
+        
+        return `${e1} & ${e2}`;
+    }
+
+    function generateGOK() {
+        const area = document.getElementById('output-area');
+        
+        // Rolls
+        const civ = civilizations[d(6)-1];
+        const origin = origins[d(6)-1];
+        const str = strengths[d(6)-1];
+        
+        const ally = alliesList[d(6)-1];
+        const enemy = getEnemies();
+
+        const ach = achievements[d(6)-1];
+        const def = defeats[d(6)-1];
+        const leg = legends[d(6)-1];
+        
+        const flaw = flaws[d(6)-1];
+
+        // Random Unit Number for flavor
+        const unitNum = d(900) + 100; 
+
+        // HTML Build
+        area.style.display = 'block';
+        area.innerHTML = `
+            <div style="text-align:center; margin-bottom:20px; border-bottom:1px dashed var(--dim); padding-bottom:10px;">
+                <span style="font-size:2em; font-weight:bold;">GÖK BİRİMİ ${unitNum}</span><br>
+                <span style="color:var(--accent);">// DURUM: ${str.split('(')[0]} //</span>
+            </div>
+
+            <div class="profile-grid">
+                
+                <div class="section">
+                    <div class="section-title">MİRAS & KÖKEN</div>
+                    <div class="data-row">
+                        <span class="label">Gelenek</span>
+                        <span class="value">${civ}</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="label">Kuruluş Dönemi</span>
+                        <span class="value">${origin.t}</span>
+                        <span class="detail">${origin.d}</span>
+                    </div>
+                </div>
+
+                <div class="section">
+                    <div class="section-title">OPERASYONEL DURUM</div>
+                    <div class="data-row">
+                        <span class="label">Birim Gücü</span>
+                        <span class="value">${str}</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="label">Birincil Müttefik</span>
+                        <span class="value" style="color:#aaffaa">${ally}</span>
+                    </div>
+                    <div class="data-row">
+                        <span class="label">Birincil Düşman</span>
+                        <span class="value" style="color:#ffaaaa">${enemy}</span>
+                    </div>
+                </div>
+
+                <div class="section full-width">
+                    <div class="section-title">TARİHÇE</div>
+                    <div class="profile-grid">
+                        <div>
+                            <span class="label">Önemli Başarı</span>
+                            <span class="value">${ach.t}</span>
+                            <span class="detail">${ach.d}</span>
+                        </div>
+                        <div>
+                            <span class="label">Tarihi Yenilgi</span>
+                            <span class="value">${def.t}</span>
+                            <span class="detail">${def.d}</span>
+                        </div>
+                        <div class="full-width" style="margin-top:10px; border-top:1px dotted var(--dim); padding-top:5px;">
+                            <span class="label">Birim Efsanesi</span>
+                            <span class="value" style="color:var(--accent)">${leg.t}</span>
+                            <span class="detail">${leg.d}</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="flaw-box">
+                <span class="label" style="color:var(--alert)">>> KURUMSAL KUSUR TESPİT EDİLDİ <<</span>
+                <div style="font-size:1.6em; font-weight:bold; margin:5px 0;">${flaw.t}</div>
+                <div style="font-style:italic; opacity:0.8; font-size: 0.95em;">${flaw.d}</div>
+            </div>
+        `;
+    }
+</script>
+</body>
+</html>

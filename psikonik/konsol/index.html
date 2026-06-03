@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taktiksel Komuta Arayüzü</title>
+    <style>
+        /* --- RETRO 80s MAINFRAME STYLE --- */
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --green: #33ff33; 
+            --dim-green: #1a881a;
+            --bg: #050505;
+            --panel-bg: rgba(0, 15, 0, 0.9);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--green);
+            font-family: 'VT323', monospace;
+            font-size: 1.4rem;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            text-shadow: 0 0 4px var(--dim-green);
+        }
+
+        /* CRT Scanlines */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
+            background-size: 100% 3px, 6px 100%;
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+            border: 2px solid var(--green);
+            box-shadow: 0 0 30px var(--dim-green) inset;
+            background: rgba(0, 10, 0, 0.6);
+            position: relative;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            border-bottom: 2px dashed var(--green);
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: 2.5rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+        }
+
+        .sub-head {
+            font-size: 1rem;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+
+        /* Navigation Menu */
+        .nav-menu {
+            display: flex;
+            flex-direction: column;
+            gap: 15px; 
+        }
+
+        a {
+            display: block;
+            text-decoration: none;
+            color: var(--green);
+            border: 2px solid var(--green);
+            padding: 15px 20px;
+            text-align: center;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            background: rgba(0, 0, 0, 0.8);
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Sub-text for tools/descriptions */
+        .sub-text {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--dim-green);
+            margin-top: 5px;
+            letter-spacing: 2px;
+            font-weight: normal;
+        }
+
+        /* Specific style for the Tool/Calculator button */
+        .tool-btn {
+            border-style: dashed; /* Differentiates utility from database */
+        }
+
+        /* Hover Effect */
+        a:hover {
+            background: var(--green);
+            color: #000;
+            box-shadow: 0 0 25px var(--green);
+            transform: scale(1.02);
+            font-weight: bold;
+        }
+
+        /* Ensure sub-text changes color on hover too */
+        a:hover .sub-text {
+            color: #000;
+            font-weight: bold;
+        }
+
+        /* Decorative brackets on hover */
+        a::before { content: "[ "; position: absolute; left: 20px; opacity: 0; transition: 0.2s; }
+        a::after { content: " ]"; position: absolute; right: 20px; opacity: 0; transition: 0.2s; }
+        
+        a:hover::before, a:hover::after {
+            opacity: 1;
+        }
+
+        /* Boot Text */
+        .boot-text {
+            font-size: 0.9rem;
+            color: var(--dim-green);
+            margin-top: 25px;
+            border-top: 1px solid var(--dim-green);
+            padding-top: 10px;
+        }
+
+        .cursor {
+            display: inline-block;
+            width: 10px;
+            height: 1em;
+            background: var(--green);
+            animation: blink 1s step-end infinite;
+            vertical-align: bottom;
+        }
+
+        @keyframes blink { 50% { opacity: 0; } }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>TAKTİKSEL<br>KOMUTA</h1>
+        <div class="sub-head">YALNIZCA YETKİLİ PERSONEL // TERMİNAL v5.1</div>
+    </div>
+
+    <div class="nav-menu">
+        <a href="gok_tr.html">
+            GÖK SİCİLİ
+        </a>
+        <a href="system_tr.html">
+            YILDIZ SEYRÜSEFER / SİSTEM ÜRT.
+        </a>
+
+        <a href="mission_tr.html">
+            GÖREV KONTROL / SENARYOLAR
+        </a>
+
+        <a href="ledger_tr.html">
+            SAVAŞ KAYDI
+            <span class="sub-text">>> BİRİM DEĞERLEME MATRİSİ <<</span>
+        </a>
+
+        <a href="xenogenesis_tr.html">
+            ZENOGENEZ TERMİNALİ
+            <span class="sub-text">>> ENTOMON BİYO-LAB <<</span>
+        </a>
+    </div>
+
+    <div class="boot-text">
+        > BELLEK KONTROLÜ... TAMAM<br>
+        > TAKTİKSEL MODÜLLER YÜKLENİYOR... TAMAM<br>
+        > BAĞLANTI KURULUYOR... TAMAM<br>
+        > SİSTEM HAZIR <span class="cursor"></span>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Savaş Kaydı - Değerleme Matrisi</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --green: #33ff33; 
+            --dim-green: #1a881a;
+            --bg: #050505;
+            --panel-bg: rgba(0, 20, 0, 0.85);
+            --border: 2px solid var(--green);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--green);
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            text-shadow: 0 0 3px var(--dim-green);
+        }
+
+        /* CRT Overlay */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .main-interface {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 1100px;
+        }
+
+        @media (max-width: 800px) {
+            .main-interface { grid-template-columns: 1fr; }
+        }
+
+        /* Panels */
+        .panel {
+            border: var(--border);
+            background: var(--panel-bg);
+            padding: 20px;
+            box-shadow: 0 0 20px var(--dim-green) inset;
+            position: relative;
+        }
+
+        h2 {
+            margin-top: 0;
+            border-bottom: 1px dashed var(--green);
+            padding-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-size: 1rem;
+            color: var(--dim-green);
+            margin-bottom: 3px;
+        }
+
+        select, input[type="text"], input[type="number"] {
+            background: #000;
+            border: 1px solid var(--green);
+            color: var(--green);
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            padding: 5px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        select:focus, input:focus {
+            outline: none;
+            box-shadow: 0 0 10px var(--green);
+        }
+
+        /* Scrolling Checkbox Lists for Multi-Select */
+        .scroll-list {
+            height: 120px;
+            overflow-y: auto;
+            border: 1px solid var(--green);
+            background: rgba(0, 0, 0, 0.5);
+            padding: 5px;
+        }
+
+        /* Scrollbar Styling */
+        .scroll-list::-webkit-scrollbar { width: 8px; }
+        .scroll-list::-webkit-scrollbar-track { background: #000; }
+        .scroll-list::-webkit-scrollbar-thumb { background: var(--dim-green); }
+
+        .list-item {
+            display: flex;
+            align-items: center;
+            padding: 2px 0;
+            font-size: 1rem;
+            border-bottom: 1px solid rgba(51, 255, 51, 0.1);
+        }
+        .list-item:hover { background: rgba(51, 255, 51, 0.1); }
+        .list-item input { width: auto; margin-right: 8px; cursor: pointer; }
+        .list-item span { cursor: pointer; width: 100%; display: flex; justify-content: space-between; padding-right: 5px; }
+        .item-special { font-size: 0.85rem; color: #698c69; font-style: italic; text-align: right;}
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box { text-align: center; }
+        .stat-note { font-size: 0.8rem; color: #888; }
+        
+        /* Checkboxes Group (Tags) */
+        .checkbox-group {
+            display: flex;
+            gap: 15px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+        .checkbox-group label {
+            display: flex; align-items: center; cursor: pointer; color: var(--green);
+        }
+        .checkbox-group input { width: 15px; height: 15px; appearance: none; border: 1px solid var(--green); margin-right: 8px; position: relative; }
+        .checkbox-group input:checked::after { content: 'X'; position: absolute; top: -3px; left: 2px; font-size: 14px; color: var(--green); }
+
+        /* Data Card (Right Side) */
+        .data-card {
+            border: 2px solid var(--green);
+            padding: 15px;
+            background: #000;
+            margin-top: 20px;
+            position: sticky;
+            top: 20px;
+        }
+
+        .card-header {
+            display: flex; justify-content: space-between; border-bottom: 2px solid var(--green); padding-bottom: 5px; margin-bottom: 10px; font-size: 1.4rem; font-weight: bold;
+        }
+
+        .stat-row {
+            display: grid; grid-template-columns: repeat(6, 1fr); text-align: center; border-bottom: 1px solid var(--green); margin-bottom: 10px; padding-bottom: 5px;
+        }
+
+        .calculation-breakdown {
+            font-size: 0.9rem; color: var(--dim-green); border-top: 1px dotted var(--dim-green); margin-top: 10px; padding-top: 5px;
+        }
+
+        .total-points {
+            font-size: 2rem; text-align: right; margin-top: 20px; border-top: 1px double var(--green); padding-top: 10px;
+        }
+
+        .blink { animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .back-btn {
+            position: fixed; top: 20px; left: 20px; border: 1px solid var(--green); padding: 5px 10px; text-decoration: none; color: var(--green); background: #000; z-index: 1000;
+        }
+        .back-btn:hover { background: var(--green); color: #000; }
+
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-btn" onclick="history.back()">< GERİ</a>
+
+<div class="main-interface">
+    
+    <div class="panel">
+        <h2>>> GİRDİ PARAMETRELERİ</h2>
+
+        <div class="form-group">
+            <label>KAYNAK CEPHANELİK</label>
+            <select id="factionSelect" onchange="updateArmory()">
+                <option value="human">İNSAN</option>
+                <option value="eloi">ELOI</option>
+                <option value="morlok">MORLOK</option>
+                <option value="entomon">ENTOMON</option>
+                <option value="chitinsan">KİTİNSAN</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>MODEL ADI</label>
+            <input type="text" id="modelName" value="ERAT-01" oninput="calculate()">
+        </div>
+
+        <label>>> BİYOLOJİK PROFİL</label>
+        <div class="stats-grid">
+            <div class="stat-box">
+                <label>HRK (cm)</label>
+                <input type="number" id="statMOV" value="8" oninput="calculate()">
+            </div>
+            <div class="stat-box">
+                <label>ATŞ (Hedef+)</label>
+                <input type="number" id="statMSL" value="4" oninput="calculate()">
+                <span class="stat-note">Düşük = Pahalı</span>
+            </div>
+            <div class="stat-box">
+                <label>DVŞ</label>
+                <input type="number" id="statMLE" value="3" oninput="calculate()">
+            </div>
+            <div class="stat-box">
+                <label>KUV</label>
+                <input type="number" id="statSTR" value="3" oninput="calculate()">
+            </div>
+            <div class="stat-box">
+                <label>DYN</label>
+                <input type="number" id="statDEF" value="3" oninput="calculate()">
+            </div>
+            <div class="stat-box">
+                <label>MRL</label>
+                <input type="number" id="statMRL" value="7" oninput="calculate()">
+            </div>
+        </div>
+
+        <label>>> ETİKETLER & BECERİLER</label>
+        <div class="stats-grid" style="margin-top: 10px;">
+            <div class="stat-box">
+                <label>SALDIRGAN</label>
+                <input type="number" id="skillAggro" value="0" min="0" oninput="calculate()">
+            </div>
+            <div class="stat-box">
+                <label>ÇETİN</label>
+                <input type="number" id="skillTough" value="0" min="0" oninput="calculate()">
+            </div>
+            <div class="stat-box">
+                <label>PSİ (Max 6)</label>
+                <input type="number" id="skillPsych" value="0" min="0" max="6" oninput="validatePsych(this)">
+            </div>
+        </div>
+
+        <div class="checkbox-group">
+            <label><input type="checkbox" id="checkMounted" onchange="calculate()"> ATLI (+5)</label>
+            <label><input type="checkbox" id="checkScout" onchange="calculate()"> İZCİ (+3)</label>
+            <label><input type="checkbox" id="checkLeaper" onchange="calculate()"> SIÇRAK (+2)</label>
+            <label><input type="checkbox" id="checkPanoptic" onchange="calculate()"> PANOPTIC (+3)</label>
+            <label><input type="checkbox" id="checkBehemoth" onchange="calculate()"> DEVASA (+5)</label>
+        </div>
+
+        <hr style="border: 0; border-top: 1px dashed var(--dim-green); margin: 20px 0;">
+
+        <div class="form-group">
+            <label>BİRİNCİL SİLAHLAR</label>
+            <div id="listPrimary" class="scroll-list"></div>
+        </div>
+
+        <div class="form-group">
+            <label>YAN SİLAH / DÖVÜŞ</label>
+            <div id="listSecondary" class="scroll-list"></div>
+        </div>
+
+        <div class="form-group">
+            <label>ZIRH (Maks 1 Takım)</label>
+            <div id="listArmour" class="scroll-list"></div>
+        </div>
+
+        <div class="form-group">
+            <label>BOMBALAR / TEÇHİZAT</label>
+            <div id="listGear" class="scroll-list"></div>
+        </div>
+
+        <div class="form-group">
+            <label>PSİKOTEKNİK / EKSTRA</label>
+            <div id="listExtra" class="scroll-list"></div>
+        </div>
+
+    </div>
+
+    <div class="panel">
+        <h2>>> BİRİM SİCİL KARTI</h2>
+        <div class="data-card" id="printCard">
+            <div class="card-header">
+                <span id="dispName">ERAT-01</span>
+                <span id="dispFaction">İNSAN</span>
+            </div>
+            
+            <div class="stat-row">
+                <div>HRK</div><div>ATŞ</div><div>DVŞ</div><div>KUV</div><div>DYN</div><div>MRL</div>
+                <div id="dMOV">8</div><div id="dMSL">4+</div><div id="dMLE">3</div><div id="dSTR">3</div><div id="dDEF">3</div><div id="dMRL">7</div>
+            </div>
+
+            <div style="font-size: 1rem; color: var(--green); margin-bottom: 15px;">
+                <div id="dispWeapons"></div>
+                <div id="dispArmour"></div>
+                <div id="dispGear"></div>
+            </div>
+
+            <div style="border-top: 1px dotted var(--dim-green); padding-top: 5px;">
+                <strong>ETİKETLER:</strong><br>
+                <span id="dispSkills" style="color: #88ff88;">-</span>
+            </div>
+
+            <div class="calculation-breakdown" id="debugCalc">
+                Taban: 5 | Çarpan: 0 | Profil: 5
+            </div>
+
+            <div class="total-points">
+                DEĞER: <span id="finalPoints" class="blink">5</span> PUAN
+            </div>
+        </div>
+        <p style="text-align: center; font-size: 0.9rem; color: var(--dim-green); margin-top: 20px;">
+            > KAYDI DIŞA AKTARMAK İÇİN [PRT SC]<br>
+            > PROFİL > 10 İSE ÇARPAN UYGULANIR
+        </p>
+    </div>
+
+</div>
+
+<script>
+    // === RULES DATA ===
+    const BASE_STATS = { MOV: 8, MSL: 4, MLE: 3, STR: 3, DEF: 3, MRL: 7 };
+    const BASE_COST = 5;
+
+    const STAT_STEP_COSTS = {
+        MOV: 0.5, MSL: 0.25, MLE: 0.5, STR: 1, DEF: 1, MRL: 0.25
+    };
+
+    const PSYCH_TABLE = [0, 5, 10, 20, 40, 80, 160];
+
+    const ARMORY = {
+        human: {
+            ranged: [
+                {n:"Saçma Tüfeği", p:1.5, s:""}, 
+                {n:"Kısa Piyade Tf. (KPT)", p:1, s:"geri itme"}, 
+                {n:"Standart Piyade Tf. (SPT)", p:1.5, s:"seri"},
+                {n:"Keskin Nişancı Tüfeği", p:1, s:"sabit"}, 
+                {n:"Alevkusan", p:1.5, s:"açıklama"}, 
+                {n:"Aldur Tüfeği", p:1.5, s:"seri"}, 
+                {n:"Lazer Tüfeği", p:1.5, s:"artyakış"},
+                {n:"Plazma Karabina", p:2, s:"ısınma"}, 
+                {n:"Zihin Zıpkını", p:2, s:"sabit, psikonik"}, 
+                {n:"Araf Balyozu", p:3, s:"psikonik"}, 
+                {n:"Düşdalga Projektörü", p:2, s:"psikonik"},
+                {n:"Makinalı Tüfek", p:3, s:"ağır, seri"}, 
+                {n:"Bomba Atar", p:3, s:"sabit"}, 
+                {n:"Ağır Aldur", p:3, s:"sabit, seri"}, 
+                {n:"Lazer Topu", p:4, s:"sabit, artyakış"}, 
+                {n:"Plazma Bataryası", p:6, s:"sabit, ısınma"}
+            ],
+            melee: [
+                {n:"Savaş Bıçağı", p:0.5, s:""}, 
+                {n:"Kısa Namlulu Saçma", p:1.5, s:"geri itme"}, 
+                {n:"Tabanca", p:0.5, s:""}, 
+                {n:"Aldur Tabancası", p:1.5, s:"seri"},
+                {n:"Lazer Tabancası", p:1, s:"artyakış"}, 
+                {n:"Plazma Tabancası", p:2, s:"ısınma"}, 
+                {n:"Hızar (Motor-süngü)", p:1.5, s:""},
+                {n:"Kılıç", p:1, s:""}, 
+                {n:"Balta", p:1, s:""}, 
+                {n:"Çekiç", p:1, s:"kalkankıran"}, 
+                {n:"Psikon Sırığı", p:2, s:"psikonik, çift el"},
+                {n:"Psikon Kılıcı", p:1.5, s:"psikonik"}, 
+                {n:"Psikon Baltası", p:2, s:"psikonik"}, 
+                {n:"Psikon Eldiveni", p:2.5, s:"psikonik"}
+            ],
+            armour: [
+                {n:"Flak Zırh", p:0.5, s:"+1 DYN", dv:1, suit:true}, 
+                {n:"Örgü Zırh", p:1, s:"+2 DYN", dv:2, suit:true}, 
+                {n:"Kabuk Zırh", p:1.5, s:"+3 DYN", dv:3, suit:true},
+                {n:"CEBE: SEL", p:1, s:"+1 DYN, sızdırmaz", dv:1, suit:true}, 
+                {n:"CEBE: MEN", p:1.5, s:"+2 DYN, sızdırmaz", dv:2, suit:true}, 
+                {n:"CEBE: ALP", p:2, s:"+3 DYN, sızdırmaz", dv:3, suit:true},
+                {n:"Kalkan", p:0.5, s:"+1 DYN (dövüş)", dv:1}, 
+                {n:"Bükücü Alan", p:4, s:"4+ Engel"}, 
+                {n:"Kırıcı Alan", p:2, s:"5+ Engel"}, 
+                {n:"Psişik Hale", p:0.5, s:"+1 Kovma"}
+            ],
+            grenades: [
+                {n:"Yaprakdöken B.", p:0.5, s:""}, 
+                {n:"Boğucu B.", p:1, s:"1z2 tur"}, 
+                {n:"Parça B.", p:1, s:"KUV 3"}, 
+                {n:"Plazma B.", p:3, s:"KUV 5"},
+                {n:"Sis B.", p:1, s:"2 tur"}, 
+                {n:"Toksin B.", p:2, s:"KUV 3"}, 
+                {n:"Virüs B.", p:2.5, s:"KUV 4"}, 
+                {n:"PMP B.", p:1, s:""}, 
+                {n:"Delici B.", p:2, s:"KUV 6"}
+            ],
+            psychos: [
+                {n:"Yaldızlı Fişek", p:1, s:"Moral geç"}, 
+                {n:"Bilişsel Çapa", p:2, s:"+1 Kovma"}, 
+                {n:"Lâl Kazığı", p:2, s:"Psi yok"}, 
+                {n:"Sakinleştirici", p:0.5, s:"Sinme sil"},
+                {n:"Travma Sargısı", p:1, s:"1 İyileş"}, 
+                {n:"Gözel Mercek", p:2, s:"+1 Atış, koşma yok"}
+            ]
+        },
+        eloi: {
+            ranged: [
+                {n:"Foton Tüfeği", p:1, s:""}, 
+                {n:"Füzyon Tüfeği", p:3, s:"artyakış"}, 
+                {n:"Rezonans Proj.", p:1.5, s:"patlama"},
+                {n:"Foton Makinesi", p:2.5, s:"sabit"}, 
+                {n:"Füzyon Bozucu", p:4, s:"ısınma, sabit"}, 
+                {n:"Rezonans Kesici", p:0.5, s:"çift el"},
+                {n:"Foton Balista", p:3.5, s:"seri, sabit"}, 
+                {n:"Füzyon Zıpkın", p:9, s:"sabit, artyakış"}, 
+                {n:"Rezonans Kuşatma", p:6, s:"sabit, ağır, yıkım"}
+            ],
+            melee: [
+                {n:"Pala/Bıçak", p:0.5, s:""}, 
+                {n:"İğne Tabancası", p:0.5, s:""}, 
+                {n:"Füzyon Tabancası", p:1, s:""}, 
+                {n:"Rezonans Tabancası", p:1, s:"geri itme"},
+                {n:"Bardiş", p:2, s:"psikonik"}, 
+                {n:"Oytu Kılıcı", p:2, s:"psikonik"}, 
+                {n:"Oytu Gürzü", p:3, s:"psikonik"},
+                {n:"Dalgır Pençe", p:1, s:"kalkankıran"}, 
+                {n:"Lâl Dirgeni", p:1.5, s:"bozum"}, 
+                {n:"Başkesen", p:1, s:"çift el"}
+            ],
+            armour: [
+                {n:"Kayış", p:0.5, s:"+1 DYN", dv:1, suit:true}, 
+                {n:"Harmani", p:1, s:"+2 DYN", dv:2, suit:true}, 
+                {n:"Panopli", p:1.5, s:"+3 DYN", dv:3, suit:true},
+                {n:"Kalkan", p:0.5, s:"+1 DYN (dövüş)", dv:1}, 
+                {n:"Oytu Haresi", p:2, s:"5+ Engel"}, 
+                {n:"Oytu Tılsımı", p:0.5, s:"+1 Kovma"}
+            ],
+            grenades: [], 
+            psychos: []
+        },
+        morlok: {
+            ranged: [
+                {n:"Foton", p:1, s:""}, 
+                {n:"Fujon", p:3, s:"artyakış"}, 
+                {n:"Civaton", p:1, s:""}, 
+                {n:"Kazık Silahı", p:1, s:"sabit, geri itme"},
+                {n:"Hidra", p:1.5, s:"seri, geri itme"}, 
+                {n:"Sismik Pompa", p:1.5, s:"patlama"}, 
+                {n:"Cüruf Zıpkını", p:5, s:"artyakış, ağır"}, 
+                {n:"Delgeç", p:2.5, s:"sabit, geri itme"}
+            ],
+            melee: [
+                {n:"Kürek", p:0.5, s:""}, 
+                {n:"Çekiç", p:0.5, s:""}, 
+                {n:"Çivi Tabancası", p:0.5, s:""}, 
+                {n:"Havalı Kazma", p:1, s:""},
+                {n:"Kaya Matkabı", p:1.5, s:""}, 
+                {n:"Ayaklı Matkap", p:1.5, s:"ağır"}, 
+                {n:"Devdeler", p:1, s:"ağır, çift el"},
+                {n:"Yutak", p:2.5, s:"ağır, çift el"}, 
+                {n:"Elmas Testere", p:2, s:"kalkankıran"}
+            ],
+            armour: [
+                {n:"Hurda Plaka", p:0.5, s:"+1 DYN", dv:1, suit:true}, 
+                {n:"Gövde Plakası", p:1, s:"+2 DYN", dv:2, suit:true}, 
+                {n:"Derin Sondaj", p:1.5, s:"+1 DYN, sızdırmaz", dv:1, suit:true},
+                {n:"Basınç Kapısı", p:0.5, s:"+1 DYN (dövüş)", dv:1}
+            ],
+            grenades: [],
+            psychos: []
+        },
+        entomon: {
+            ranged: [
+                {n:"Örü Memesi", p:1, s:""},
+                {n:"Dalağan", p:1.5, s:"geri itme"},
+                {n:"Püskürtücü", p:1.5, s:"seri"},
+                {n:"Cırıldak", p:2, s:"psikonik"},
+                {n:"Pigidyal Püskürtücü", p:1.5, s:"artyakış"},
+                {n:"Tükürücü", p:1, s:""}
+            ],
+            melee: [
+                {n:"Pençe", p:0.5, s:""},
+                {n:"Kıskaç", p:0.5, s:""},
+                {n:"İğne", p:1, s:"kalkankıran"},
+                {n:"Hortum", p:0.5, s:""},
+                {n:"Yırtıcı Bacak", p:1, s:""},
+                {n:"Çenek", p:2, s:"kalkankıran"}
+            ],
+            armour: [], // Biomorphs usually imply natural armour in base stats
+            grenades: [],
+            psychos: []
+        }
+    };
+
+    // CHITINSAN: Human + Entomon
+    ARMORY.chitinsan = {
+        ranged: [...ARMORY.human.ranged, ...ARMORY.entomon.ranged],
+        melee: [...ARMORY.human.melee, ...ARMORY.entomon.melee],
+        armour: ARMORY.human.armour,
+        grenades: ARMORY.human.grenades,
+        psychos: ARMORY.human.psychos
+    };
+
+    function validatePsych(el) {
+        if(el.value > 6) el.value = 6;
+        if(el.value < 0) el.value = 0;
+        calculate();
+    }
+
+    function renderList(containerId, items, isArmour = false) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = ""; 
+        
+        if(!items || items.length === 0) {
+            container.innerHTML = "<div style='color:#555; padding:5px;'>-- Mevcut Değil --</div>";
+            return;
+        }
+
+        items.forEach((item, index) => {
+            const div = document.createElement("div");
+            div.className = "list-item";
+            
+            const chk = document.createElement("input");
+            chk.type = "checkbox";
+            chk.value = item.p;
+            chk.dataset.name = item.n;
+            chk.dataset.special = item.s || ""; 
+            chk.dataset.dv = item.dv || 0;
+            chk.id = `${containerId}_${index}`;
+            
+            if (isArmour && item.suit) {
+                chk.classList.add('suit-armor');
+                chk.onclick = function() {
+                    if (this.checked) {
+                        const allSuits = container.querySelectorAll('.suit-armor');
+                        allSuits.forEach(s => {
+                            if(s !== this) s.checked = false;
+                        });
+                    }
+                    calculate();
+                };
+            } else {
+                chk.onclick = calculate;
+            }
+
+            const label = document.createElement("span");
+            label.onclick = function() { chk.click(); };
+            label.innerHTML = `${item.n} [${item.p}] <span class="item-special">${item.s}</span>`;
+
+            div.appendChild(chk);
+            div.appendChild(label);
+            container.appendChild(div);
+        });
+    }
+
+    function updateArmory() {
+        const faction = document.getElementById('factionSelect').value;
+        const data = ARMORY[faction];
+        
+        renderList('listPrimary', data.ranged);
+        renderList('listSecondary', data.melee);
+        renderList('listArmour', data.armour, true); 
+        
+        let grenadesList = (data.grenades && data.grenades.length > 0) ? data.grenades : [];
+        if(faction === 'human' || faction === 'chitinsan') grenadesList = ARMORY['human'].grenades;
+        renderList('listGear', grenadesList);
+
+        let psychoList = (data.psychos && data.psychos.length > 0) ? data.psychos : [];
+        if(faction === 'human' || faction === 'chitinsan') psychoList = ARMORY['human'].psychos;
+        renderList('listExtra', psychoList);
+
+        document.getElementById('dispFaction').innerText = faction.toUpperCase();
+        
+        calculate();
+    }
+
+    function getCheckedItems(containerId) {
+        let total = 0;
+        let totalDv = 0;
+        let items = [];
+        const container = document.getElementById(containerId);
+        const checks = container.querySelectorAll('input[type="checkbox"]:checked');
+        
+        checks.forEach(chk => {
+            total += parseFloat(chk.value);
+            totalDv += parseInt(chk.dataset.dv || 0);
+
+            let nameStr = chk.dataset.name;
+            if(chk.dataset.special) {
+                // Shorten text for card
+                let s = chk.dataset.special;
+                nameStr += ` (${s})`;
+            }
+            items.push(nameStr);
+        });
+        
+        return { cost: total, names: items, dv: totalDv };
+    }
+
+    function calculate() {
+        const userStats = {
+            MOV: parseFloat(document.getElementById('statMOV').value) || 0,
+            MSL: parseFloat(document.getElementById('statMSL').value) || 0,
+            MLE: parseFloat(document.getElementById('statMLE').value) || 0,
+            STR: parseFloat(document.getElementById('statSTR').value) || 0,
+            DEF: parseFloat(document.getElementById('statDEF').value) || 0,
+            MRL: parseFloat(document.getElementById('statMRL').value) || 0
+        };
+
+        let statCost = 0;
+        statCost += (userStats.MOV - BASE_STATS.MOV) * STAT_STEP_COSTS.MOV;
+        statCost += (userStats.MLE - BASE_STATS.MLE) * STAT_STEP_COSTS.MLE;
+        statCost += (userStats.STR - BASE_STATS.STR) * STAT_STEP_COSTS.STR;
+        statCost += (userStats.DEF - BASE_STATS.DEF) * STAT_STEP_COSTS.DEF;
+        statCost += (userStats.MRL - BASE_STATS.MRL) * STAT_STEP_COSTS.MRL;
+        // MSL Logic: Lower is better (costlier)
+        const mslImprovement = BASE_STATS.MSL - userStats.MSL;
+        statCost += mslImprovement * STAT_STEP_COSTS.MSL;
+
+        let tagCost = 0;
+        let skillsText = [];
+
+        const aggroLvl = parseInt(document.getElementById('skillAggro').value) || 0;
+        if(aggroLvl > 0) {
+            tagCost += aggroLvl * 5;
+            skillsText.push(`SALDIRGAN(${aggroLvl+1})`);
+        }
+
+        const toughLvl = parseInt(document.getElementById('skillTough').value) || 0;
+        if(toughLvl > 0) {
+            tagCost += toughLvl * 4;
+            skillsText.push(`ÇETİN(${toughLvl+1})`);
+        }
+
+        let psychLvl = parseInt(document.getElementById('skillPsych').value) || 0;
+        if(psychLvl > 6) psychLvl = 6;
+        if(psychLvl > 0) {
+            tagCost += PSYCH_TABLE[psychLvl];
+            skillsText.push(`PSİ-${psychLvl}`);
+        }
+
+        if(document.getElementById('checkMounted').checked) {
+            tagCost += 5;
+            skillsText.push("ATLI");
+        }
+        if(document.getElementById('checkScout').checked) {
+            tagCost += 3;
+            skillsText.push("İZCİ");
+        }
+        if(document.getElementById('checkLeaper').checked) {
+            tagCost += 2;
+            skillsText.push("SIÇRAK");
+        }
+        if(document.getElementById('checkPanoptic').checked) {
+            tagCost += 3;
+            skillsText.push("PANOPTIC");
+        }
+        if(document.getElementById('checkBehemoth').checked) {
+            tagCost += 5;
+            skillsText.push("DEVASA");
+        }
+
+        let rawProfile = BASE_COST + statCost + tagCost;
+        if(rawProfile < 1) rawProfile = 1;
+
+        let multiplier = 1;
+        if(rawProfile > 10) {
+            if(rawProfile <= 15) multiplier = 1.5;
+            else if(rawProfile <= 20) multiplier = 2;
+            else if(rawProfile <= 30) multiplier = 3;
+            else if(rawProfile <= 40) multiplier = 4;
+            else if(rawProfile <= 50) multiplier = 5;
+            else {
+                multiplier = 5 + Math.ceil((rawProfile - 50) / 10);
+            }
+        }
+
+        let multipliedProfile = rawProfile * multiplier;
+
+        const rPrimary = getCheckedItems('listPrimary');
+        const rSecondary = getCheckedItems('listSecondary');
+        const rArmour = getCheckedItems('listArmour');
+        const rGear = getCheckedItems('listGear');
+        const rExtra = getCheckedItems('listExtra');
+
+        let equipCost = rPrimary.cost + rSecondary.cost + rArmour.cost + rGear.cost + rExtra.cost;
+        const totalFinal = multipliedProfile + equipCost;
+
+        // Display
+        document.getElementById('dispName').innerText = document.getElementById('modelName').value || "ERAT-01";
+        
+        document.getElementById('dMOV').innerText = userStats.MOV;
+        document.getElementById('dMSL').innerText = userStats.MSL + "+";
+        document.getElementById('dMLE').innerText = userStats.MLE;
+        document.getElementById('dSTR').innerText = userStats.STR;
+        
+        let defDisplay = userStats.DEF;
+        if(rArmour.dv > 0) {
+            defDisplay += ` (+${rArmour.dv})`;
+        }
+        document.getElementById('dDEF').innerText = defDisplay;
+
+        document.getElementById('dMRL').innerText = userStats.MRL;
+
+        let allWeapons = [...rPrimary.names, ...rSecondary.names];
+        document.getElementById('dispWeapons').innerText = "SİLAHLAR: " + (allWeapons.length ? allWeapons.join(", ") : "-");
+
+        document.getElementById('dispArmour').innerText = "ZIRH: " + (rArmour.names.length ? rArmour.names.join(", ") : "-");
+
+        let allGear = [...rGear.names, ...rExtra.names];
+        document.getElementById('dispGear').innerText = "TEÇHİZAT: " + (allGear.length ? allGear.join(", ") : "-");
+
+        document.getElementById('dispSkills').innerText = skillsText.length ? skillsText.join(", ") : "-";
+
+        document.getElementById('debugCalc').innerHTML = 
+            `Taban: ${rawProfile.toFixed(2)} x ${multiplier} (Çarpan) = ${multipliedProfile.toFixed(2)}<br>` +
+            `+ Donanım: ${equipCost}`;
+
+        document.getElementById('finalPoints').innerText = +totalFinal.toFixed(2);
+    }
+
+    // Init
+    updateArmory();
+</script>
+
+</body>
+</html>

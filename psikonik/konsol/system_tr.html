@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistem Üreteci v8.1 (Lore Uyumlu)</title>
+    <style>
+        /* --- RETRO 80s CONSOLE STYLE --- */
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --green: #33ff33; 
+            --dim-green: #1a881a;
+            --alert: #ff3333; 
+            --amber: #ffcc00;
+            --purple: #d833ff; /* Araf Rengi */
+            --bg: #050505;
+            --panel-bg: rgba(0, 20, 0, 0.6);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--green);
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            margin: 0;
+            padding: 20px;
+            box-sizing: border-box;
+            text-shadow: 0 0 3px var(--dim-green);
+            height: 100vh;
+            overflow-y: auto;
+        }
+
+        /* Scanlines */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
+            background-size: 100% 3px, 6px 100%;
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        h1, h2 {
+            text-transform: uppercase;
+            border-bottom: 2px dashed var(--green);
+            padding-bottom: 5px;
+            margin-top: 10px;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            border: 2px solid var(--green);
+            padding: 20px;
+            box-shadow: 0 0 20px var(--dim-green) inset;
+            min-height: 90vh;
+            background: #000;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            padding: 10px;
+            border-bottom: 1px solid var(--dim-green);
+        }
+
+        button {
+            background: #000;
+            color: var(--green);
+            border: 2px solid var(--green);
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            padding: 8px 20px;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 0 5px var(--dim-green); 
+            transition: 0.2s;
+            margin: 0 5px;
+        }
+        button:hover {
+            background: var(--green);
+            color: #000;
+            box-shadow: 0 0 15px var(--green);
+        }
+        
+        button.scan-btn { border-color: var(--green); }
+        button.gate-btn { border-color: var(--alert); color: var(--alert); box-shadow: 0 0 5px var(--alert); }
+        button.gate-btn:hover { background: var(--alert); color: #000; }
+        button.fault-btn { border-color: var(--purple); color: var(--purple); box-shadow: 0 0 5px var(--purple); }
+        button.fault-btn:hover { background: var(--purple); color: #000; }
+
+        /* System Map */
+        #system-map {
+            white-space: pre;
+            line-height: 1.3;
+            margin-bottom: 20px;
+            overflow-x: auto;
+            border: 1px solid var(--dim-green);
+            padding: 15px;
+            background: rgba(0, 10, 0, 0.3);
+        }
+        .map-row {
+            padding: 5px 0;
+            display: flex;
+            align-items: center;
+            border-bottom: 1px dotted #113311;
+        }
+        .map-row:hover { background: rgba(51, 255, 51, 0.1); }
+        .map-art { width: 140px; display: inline-block; font-weight: bold; color: #fff; text-align: center; }
+        .map-info { flex-grow: 1; padding-left: 15px; }
+
+        /* Data Display */
+        #details-panel { 
+            display: none; 
+            border-top: 4px double var(--green); 
+            padding-top: 10px; 
+            margin-top: auto;
+        }
+        
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .data-item {
+            border-left: 3px solid var(--dim-green);
+            padding-left: 12px;
+            background: var(--panel-bg);
+            padding-top: 8px; padding-bottom: 8px;
+        }
+        .label { display: block; font-size: 0.8em; color: var(--dim-green); text-transform: uppercase; margin-bottom: 4px;}
+        .value { font-size: 1.2em; font-weight: bold; line-height: 1.1; }
+        .sub-value { font-size: 0.9em; color: var(--amber); font-style: italic; display: block; margin-top: 4px; }
+
+        .warning-panel {
+            border: 2px solid var(--alert);
+            padding: 15px;
+            margin-top: 20px;
+            background: rgba(50, 0, 0, 0.15);
+        }
+        .warning-header {
+            color: var(--alert);
+            text-align: center;
+            border-bottom: 1px solid var(--alert);
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 1.3rem;
+            animation: pulse 2s infinite;
+        }
+
+        .araf-panel {
+            border: 2px solid var(--purple);
+            padding: 15px;
+            margin-top: 20px;
+            background: rgba(20, 0, 20, 0.4);
+        }
+        .araf-header {
+            color: var(--purple);
+            text-align: center;
+            border-bottom: 1px solid var(--purple);
+            margin-bottom: 15px;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+        
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+        .log-table th { text-align: left; color: var(--purple); border-bottom: 1px dashed var(--purple); padding: 5px; }
+        .log-table td { padding: 5px; border-bottom: 1px dotted #440044; color: #eebbff; }
+        .log-high { color: var(--alert) !important; font-weight: bold; }
+        .log-date { font-family: monospace; color: #cc88ff; }
+        .log-era { font-size: 0.8em; color: #8844aa; font-style: italic; display:block; }
+
+        .tier-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border: 1px solid;
+            font-weight: bold;
+            margin-top: 5px;
+        }
+        .tier-green { color: var(--green); border-color: var(--green); }
+        .tier-amber { color: var(--amber); border-color: var(--amber); }
+        .tier-red   { color: var(--alert); border-color: var(--alert); }
+
+        @keyframes pulse { 0% { opacity: 0.8; } 50% { opacity: 1; } 100% { opacity: 0.8; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>SİSTEM.GEN_v8.1 // LORE UYUMLU</h1>
+    
+    <div class="controls">
+        <button onclick="generateSystem()">[ SİSTEM TARAMASINI BAŞLAT ]</button>
+    </div>
+
+    <div id="system-header" style="text-align:center; color: var(--dim-green); margin-bottom:10px;">
+        > KOMUT BEKLENİYOR...
+    </div>
+    <div id="system-map"></div>
+
+    <div id="details-panel">
+        <h2 id="details-title">TARAMA SONUCU</h2>
+        <div id="details-content"></div>
+    </div>
+</div>
+
+<script>
+    /* --- DICE ENGINE --- */
+    const d = (sides) => Math.floor(Math.random() * sides) + 1;
+    const roll = (count, sides) => {
+        let t = 0; for(let i=0; i<count; i++) t += d(sides); return t;
+    };
+    const randomYear = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+    /* --- GLOBAL STATE --- */
+    let systemState = []; 
+
+    /* --- DATA TABLES --- */
+    const planetTypes = ["Yetim","Neptünyen","Neptünyen","Neptünyen","Karasal","Karasal","Karasal","Dev Dünya","Dev Dünya","Dev Dünya","Gaz Devi"];
+    const tilts = ["Mevsim Yok","Küçük Mevsimsel Değ.","Küçük Mevsimsel Değ.","Küçük Mevsimsel Değ.","Dünya Benzeri","Dünya Benzeri","Dünya Benzeri","Büyük Mevsimsel Değ.","Büyük Mevsimsel Değ.","Büyük Mevsimsel Değ.","Büyük Mevsimsel Değ."];
+    
+    // SCHENGEOR SCALE (Updated)
+    const schengeorTable = {
+        2: { mag: "1.0-1.9", name: "Mikro", class: "Yalnızca cihazlarca algılama" },
+        3: { mag: "2.0-2.9", name: "Küçük", class: "Eğitimli sismopatlar tarafından algılanabilir" },
+        4: { mag: "3.0-3.9", name: "Zayıf", class: "Yerel telepatik bozulma" },
+        5: { mag: "4.0-4.9", name: "Hafif", class: "Fark edilebilir rezonans; düşük Geçit kırpışması" },
+        6: { mag: "5.0-5.9", name: "Orta",  class: "Alan istikrarsızlığı; kısa süreli psikonik parazit" },
+        7: { mag: "6.0-6.9", name: "Güçlü", class: "Bölgesel bozulma; olası geçit rezonansı" },
+        8: { mag: "7.0-7.9", name: "Büyük", class: "Atmosferik düzeyde bozulma; potansiyel Araf ihlali" },
+        9: { mag: "8.0-8.9", name: "Müthiş",class: "Araf tabakalarının çöküşü; geçit evirim olayları" },
+        10:{ mag: "9.0-9.9", name: "Nihai", class: "Topyekün dizge hatası; uzay-zaman ayrışımı" },
+        11:{ mag: "9.0-9.9", name: "Nihai", class: "Topyekün dizge hatası; uzay-zaman ayrışımı" },
+        12:{ mag: "9.0-9.9", name: "Nihai", class: "Topyekün dizge hatası; uzay-zaman ayrışımı" }
+    };
+
+    /* --- LORE HELPERS --- */
+    function getEra(year) {
+        if(year < 4071) return "Raşidun Dönemi";
+        if(year < 4113) return "İlk Fitne (İç Savaş)";
+        if(year < 4200) return "Bölünme";
+        if(year < 5000) return "Genişleme / Cynus Savaşları";
+        if(year < 6000) return "Hilopatist Dönem / 2. Fitne";
+        if(year <= 7000) return "Çöküş / Karanlık Sistemler";
+        return "Bilinmeyen Çağ";
+    }
+
+    /* --- DATA GENERATORS --- */
+
+    function createFaultData() {
+        let logs = [];
+        for(let i=0; i<5; i++) {
+            const r = roll(2,6);
+            const yr = randomYear(4000, 7000);
+            logs.push({
+                roll: r,
+                info: schengeorTable[r],
+                cycle: yr,
+                era: getEra(yr)
+            });
+        }
+        // Sort by cycle descending (newest first)
+        logs.sort((a, b) => b.cycle - a.cycle);
+        return logs;
+    }
+
+    function createGateData() {
+        const intRoll = d(6);
+        const stabRoll = d(6);
+        
+        const integrityData = [
+            { t: "Kusursuz", d: "Ölçülebilir kusur yok. Geometri evrensel olarak simetrik." },
+            { t: "Sağlam", d: "Psikonik kılıfın küçük çaplı aşınması. İstikrarlı trafik için standart." },
+            { t: "Bayağı", d: "Ayrık rezonans sapması. Prokurokrasi denetimi gerekir." },
+            { t: "Tehlikeli", d: "Hasarlı kronotopik kafes. Yalnızca yüksek risk feragatnameleri ile." },
+            { t: "Kırık", d: "Öklid dışı sabitlemenin çökmesi. Açıklıklar kararsız." },
+            { t: "Ölü", d: "İşlevsel açıklık yok. Geometri hareketsiz." }
+        ];
+
+        const stabilityData = [
+            { t: "Mükemmel Harmonik Kilit", d: "Sıfır sapma. Referans standartları." },
+            { t: "Kararlı", d: "Gözardı edilebilir sapma. Sivil trafik için güvenli." },
+            { t: "Hafif Sapma", d: "Çevirmen müdahalesi ile düzeltilebilir." },
+            { t: "Değişken", d: "Kalibre edilmiş çekirdekler gerekir. Yarı yerelleştirme riski." },
+            { t: "Şiddetli Harmonik Bozulma", d: "Yersizleştirme riski yüksek. Arafi sızıntısı." },
+            { t: "Yabancı Bulaşma İzleri", d: "Arafi izinsiz giriş kanıtı. Kesinlikle yasaktır." }
+        ];
+
+        let tier = "", tierClass = "";
+        if (intRoll === 6 || stabRoll === 6) {
+            tier = "SEVİYE 6: YASAK (İhanet Riski)"; tierClass = "tier-red";
+        } else if (intRoll === 5 || stabRoll === 5) {
+            tier = "SEVİYE 5: KARANTİNA (Ölümcül Risk)"; tierClass = "tier-red";
+        } else if (intRoll === 4 || stabRoll === 4) {
+            tier = "SEVİYE 4: RİSKLİ (Özel Kadro / Denetim Şart)"; tierClass = "tier-amber";
+        } else if (intRoll === 3 || stabRoll === 3) {
+            tier = "SEVİYE 3: KISITLI (Askeri / Bilimsel)"; tierClass = "tier-amber";
+        } else if (intRoll === 2 || stabRoll === 2) {
+            tier = "SEVİYE 2: TAM SERTİFİKALI (Sivil / Ticari)"; tierClass = "tier-green";
+        } else {
+            tier = "SEVİYE 1: REFERANS GEÇİT (Elit Koruma)"; tierClass = "tier-green";
+        }
+
+        return {
+            int: { val: intRoll, text: integrityData[intRoll-1] },
+            stab: { val: stabRoll, text: stabilityData[stabRoll-1] },
+            tier: { text: tier, css: tierClass }
+        };
+    }
+
+    function createPlanetData(isHabitable) {
+        // Type
+        let type = isHabitable ? "Karasal (Yaşanabilir Bölge)" : planetTypes[Math.min(roll(2,6)-2, 10)] || "Gaz Devi";
+        
+        // Size
+        const sRoll = roll(2,6);
+        let sizeStr="", mod=0;
+        if(sRoll<=2){sizeStr="Ufak";mod=-2;}
+        else if(sRoll<=5){sizeStr="Minik";mod=-1;}
+        else if(sRoll<=8){sizeStr="Ortalama";mod=0;}
+        else if(sRoll<=11){sizeStr="Büyük";mod=1;}
+        else{sizeStr="Devasa";mod=2;}
+
+        // Tilt
+        const tilt = tilts[Math.min(roll(2,6)-2, 10)] || "Aşırı Değişim";
+        
+        // Day
+        let dayRoll = roll(2,6)+mod;
+        let day = dayRoll<=2 ? (d(2)+5) : (dayRoll<=5?(d(3)+10):(dayRoll<=8?(d(6)+20):(dayRoll<=11?(roll(2,6)+40):(roll(3,6)+80))));
+        day += " Saat";
+
+        // Moons
+        let satRoll = roll(2,6)+mod;
+        let moons = satRoll<=2 ? "Yok" : (satRoll<=5?d(2):(satRoll<=8?d(3):(satRoll<=11?d(6)+1:d(6)+2)));
+        if(typeof moons === 'number') moons += " Uydu";
+
+        // Gravity
+        let gravRoll = d(6)+mod;
+        let grav = gravRoll<=1?"Çok Hafif (+4)":(gravRoll===2?"Hafif (+2)":(gravRoll<=4?"Dünya Benzeri":(gravRoll===5?"Ağır (-2)":"Çok Ağır (-4)")));
+
+        // Atmosphere
+        let atmoRoll = d(6)-mod;
+        let atmoStr = atmoRoll<=1?"Zehirli":(atmoRoll<=3?"Aşındırıcı":"Dünya Benzeri");
+
+        // Climate
+        let climRoll = roll(2,6)+mod;
+        let clim = climRoll<=2?"Çok Sıcak":(climRoll<=5?"Tropikal":(climRoll<=8?"Dünya Benzeri":(climRoll<=11?"Soğuk":"Çok Soğuk")));
+
+        // Hydrosphere: Percentage only
+        let hydroPct = Math.max(0, (roll(2,6)-2)*10);
+        
+        // Terrain
+        let terrCount = d(3);
+        let terrOpts = ["Çorak Topraklar","Tepeler","Dağlar","Ovalar","Ormanlar","Bataklıklar"];
+        let terrain = [];
+        for(let i=0;i<terrCount;i++) terrain.push(terrOpts[d(6)-1]);
+        terrain = [...new Set(terrain)].join(", ");
+
+        // Biosphere
+        let bioMod = isHabitable ? 1 : 0;
+        let bioRoll = d(6) + bioMod;
+        let forms = [];
+        if(bioRoll>=2) forms.push("Proto-organizmalar");
+        if(bioRoll>=3) forms.push("Bitkiler");
+        if(bioRoll>=4) forms.push("Alt Türler");
+        if(bioRoll>=5) forms.push("Üst Türler");
+        let intelligent = bioRoll>=6;
+        if(intelligent) forms.push("ZEKİ YAŞAM");
+        let bioStr = forms.length ? forms.join(", ") : "Yaşam Yok";
+        
+        // Civ
+        let civData = null;
+        if(intelligent) {
+            let sR = d(6);
+            let species = ["Bitkiler","Hayvanlar","Senoidler","Entomonid","İnsansılar","Bilinmeyen/Anomali"][sR-1];
+            
+            let tMod = sR>=4?1:0;
+            let tR = d(6)+tMod;
+            let tech = ["TI (Basit)","TII (Gen)","TIII (Molekül)","TIV (Atomik/YZ)","TV (Çekirdek)","TVI (Temel Parçacık)","TΩ (Uzay-Zaman)"][Math.min(tR-1, 6)];
+            
+            let pR = roll(2,6);
+            let popArr = ["<10","10-99","100-999","1,000s","10,000s","100,000s","1-9 Milyon","10-99 Milyon","100-999 Milyon","1-9 Milyar","10-99 Milyar"];
+            let pop = popArr[Math.max(0, pR-2)] || "Bilinmiyor";
+            
+            let socR = roll(2,6) + tR; 
+            // Cap tech level at 7 for this calc to prevent overflow
+            let techInt = Math.min(tR, 7);
+            socR = roll(2,6) + techInt;
+
+            let soc = "";
+            if (socR >= 18) {
+                let wgR = d(6);
+                let wgType = wgR<=2?"Otokrasi":(wgR<=4?"Oligarşi":"Demokrasi");
+                soc = `Dünya Hükümeti (${wgType})`;
+            } else {
+                soc = socR<=5?"Anarşi/Kabile":(socR<=8?"Teokratik/Feodal":(socR<=11?"Kast/Oligarşi":(socR<=14?"Otokrasi/Diktatörlük":(socR<=17?"Cumhuriyet/Demokrasi":"Dünya Hükümeti"))));
+            }
+
+            let ecoR = d(6);
+            let eco = ["Yasadışı/Yok","Tarımsal","İdari","Endüstriyel","Madencilik","Karışık"][ecoR-1];
+            civData = { species, tech, pop, soc, eco };
+        }
+
+        // Solar Sign
+        let solR = d(6);
+        let solarTxt = solR<=4?"Yok":(solR===5?"Güneş İmi (Varsayılan)":"Güneş İmi (TESPİT EDİLDİ)");
+        let hasSign = solR >= 5;
+        let signData = null;
+        
+        if(hasSign) {
+            const arch = ["Monolit","Labirent","Teras/Basamaklı","Dikit","Litik Alan","Mahzenli"][d(6)-1];
+            const func = ["Belirsiz","Kılavuz Düğümü","Anımsama Motoru","Yükselteç","Biyolojik Vektör","İşaretçi","Proto-Miraç Alanı"][d(7)-1];
+            
+            const pR = d(7)-1; 
+            const pLvl = ["Uykun","Reaktif","Harmonik","Yinelemeli","Değişken","Anormal","Yıkıcı"][pR];
+            
+            let pEff = "";
+            if (pR <= 2) pEff = "VIZILDAYAN TAŞ: Psi kullanımında Morale -1.";
+            else if (pR <= 4) pEff = "ZİHİNSEL PARAZİT: 15cm içindeki başarılı moralleri yeniden at.";
+            else pEff = "GERÇEKLİK TAŞMASI: Her tur d6=1 -> KUV 4 darbe.";
+            
+            const bR = d(7)-1; 
+            const bLvl = ["Steril","Endemik","Mutajenik","Simbiyotik","Vektörel","Bilişsel","Zenobiyotik"][bR];
+            
+            let bEff = "";
+            if (bR <= 2) bEff = "YOĞUN BİTKİ: İmin etrafı zorlu zemin.";
+            else if (bR <= 4) bEff = "SPOR BULUTU: Görüş 20cm ile sınırlı.";
+            else bEff = "DÜŞMANCA FLORA: Hareket bitince d6=1 -> KUV 3 darbe.";
+            
+            signData = { arch, func, pLvl, pEff, bLvl, bEff };
+        }
+
+        return {
+            type, sizeStr, mod, tilt, day, moons, grav, atmoStr, clim, hydroPct, terrain, bioStr, civData, solarTxt, hasSign, signData
+        };
+    }
+
+    /* --- MASTER SYSTEM GENERATOR --- */
+    function generateSystem() {
+        // 1. Reset
+        systemState = []; 
+        document.getElementById('details-panel').style.display = 'none';
+        const map = document.getElementById('system-map');
+        map.innerHTML = "";
+
+        // 2. Star
+        const sSize = d(6);
+        const sType = d(6)>=5 ? (d(6)===6?"Üçlü":"Çift") : "Tek";
+        const starNames = ["Altcüce","Cüce","Cüce","Altdev","Dev","Üstdev"];
+        
+        document.getElementById('system-header').innerHTML = 
+            `> YILDIZ: ${sType} ${starNames[sSize-1]} | YAŞANABİLİR YÖRÜNGE: ${sSize}`;
+
+        let starArt = sType==="Tek"?"( O )":(sType==="Çift"?"(o)(O)":"(o)(O)(o)");
+        map.innerHTML += `<div style="text-align:center;color:#ffff33;margin-bottom:15px; font-size:1.5em;">${starArt}<br><span style="font-size:0.6em">SİSTEM MERKEZİ</span></div>`;
+
+        // 3. Orbits
+        const orbitsCount = Math.ceil(Math.random()*3) + sSize;
+
+        for(let i=1; i<=orbitsCount; i++) {
+            const isHab = (i === sSize);
+            const r = roll(2,6);
+            
+            let type="Boş", btn="", art="---------";
+            let orbitData = { index: i, type: "Boş", content: null };
+
+            if(r===2) { 
+                type="Araf Fay Hattı"; 
+                art=" // X // "; 
+                btn = `<button class="fault-btn" onclick="renderFault(${i})">KAYITLARI OKU</button>`;
+                orbitData.type = "Fay";
+                orbitData.content = createFaultData();
+            }
+            else if(r<=5) { type="Asteroit Kuşağı"; art=" .:.:::. "; orbitData.type = "Kuşak"; }
+            else if(r<=8) { 
+                type="Gezegen"; 
+                art= isHab ? "- [(@)] -" : " - (o) - "; 
+                btn = `<button class="scan-btn" onclick="renderPlanet(${i})">TARAMA YAP</button>`;
+                orbitData.type = "Gezegen";
+                orbitData.content = createPlanetData(isHab);
+            }
+            else if(r<=11) { type="Enkaz Alanı / Nebula"; art=" # %% # "; orbitData.type = "Enkaz"; }
+            else { 
+                type="Güneş Geçidi"; 
+                art=" < [ ] > "; 
+                btn = `<button class="gate-btn" onclick="renderGate(${i})">ANALİZ ET</button>`;
+                orbitData.type = "Geçit";
+                orbitData.content = createGateData();
+            }
+
+            // Store in state
+            systemState[i] = orbitData;
+
+            const row = document.createElement('div');
+            row.className = 'map-row';
+            
+            let label = `<span style="color:${isHab?'#ffff33':'inherit'}">YÖRÜNGE ${i}: ${type}</span>`;
+            if(isHab && type!=="Gezegen") label += ` <span style="opacity:0.5;font-size:0.8em;">(BÖLGE BOŞA GİTTİ)</span>`;
+
+            row.innerHTML = `
+                <span class="map-art">${art}</span>
+                <div class="map-info">${label}</div>
+                ${btn}
+            `;
+            map.appendChild(row);
+        }
+    }
+
+    /* --- RENDER FUNCTIONS (Read from state) --- */
+
+    function renderFault(index) {
+        const data = systemState[index].content;
+        const panel = document.getElementById('details-panel');
+        const content = document.getElementById('details-content');
+        const title = document.getElementById('details-title');
+        
+        title.innerText = `FAY ANALİZİ: YÖRÜNGE ${index}`;
+        title.style.color = 'var(--purple)';
+        title.style.borderColor = 'var(--purple)';
+
+        let logsHTML = "";
+        data.forEach(log => {
+            const isHigh = log.roll >= 10 ? 'log-high' : '';
+            logsHTML += `
+                <tr>
+                    <td>
+                        <span class="log-date">DÖNGÜ-${log.cycle}</span>
+                        <span class="log-era">${log.era}</span>
+                    </td>
+                    <td class="${isHigh}">${log.info.mag} (Ψ)</td>
+                    <td>${log.info.name}</td>
+                    <td>${log.info.class}</td>
+                </tr>
+            `;
+        });
+
+        content.innerHTML = `
+            <div class="araf-panel">
+                <div class="araf-header">SCHENGEOR BÜYÜKLÜK KAYDI (SON 5 OLAY)</div>
+                <table class="log-table">
+                    <thead><tr><th>DÖNGÜ / DÖNEM</th><th>BÜYÜKLÜK (Ψ)</th><th>SINIF</th><th>TEZAHÜR</th></tr></thead>
+                    <tbody>${logsHTML}</tbody>
+                </table>
+                <div style="margin-top:15px; font-size:0.8em; font-style:italic; text-align:center; color:#eebbff;">
+                    NOT: Ψ > 8.9 teorik uzay-zaman ayrışmasını temsil eder.
+                </div>
+            </div>
+        `;
+        panel.style.display = 'block';
+        panel.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function renderGate(index) {
+        const data = systemState[index].content;
+        const panel = document.getElementById('details-panel');
+        const content = document.getElementById('details-content');
+        const title = document.getElementById('details-title');
+
+        title.innerText = `GEÇİT ANALİZİ: YÖRÜNGE ${index}`;
+        title.style.color = 'var(--alert)';
+        title.style.borderColor = 'var(--alert)';
+
+        content.innerHTML = `
+            <div class="warning-panel" style="margin-top:0;">
+                <div class="warning-header">GÜNEŞ GEÇİDİ TANI RAPORU</div>
+                <div class="data-grid">
+                    <div class="data-item">
+                        <span class="label">Yapısal Bütünlük (Snf. ${data.int.val})</span>
+                        <span class="value">${data.int.text.t}</span>
+                        <span class="sub-value">${data.int.text.d}</span>
+                    </div>
+                    <div class="data-item">
+                        <span class="label">Rezonans Kararlılığı (Der. ${data.stab.val})</span>
+                        <span class="value">${data.stab.text.t}</span>
+                        <span class="sub-value">${data.stab.text.d}</span>
+                    </div>
+                    <div class="data-item" style="grid-column: 1 / -1; border-color: var(--green);">
+                        <span class="label">Operasyonel Sertifikasyon</span>
+                        <div class="value ${data.tier.css}" style="margin-top:5px; font-size:1.4em;">${data.tier.text}</div>
+                    </div>
+                </div>
+            </div>
+        `;
+        panel.style.display = 'block';
+        panel.scrollIntoView({ behavior: "smooth" });
+    }
+
+    function renderPlanet(index) {
+        const d = systemState[index].content; // d for data
+        const panel = document.getElementById('details-panel');
+        const content = document.getElementById('details-content');
+        const title = document.getElementById('details-title');
+
+        title.innerText = `GEZEGEN TARAMASI: YÖRÜNGE ${index}`;
+        title.style.color = 'var(--green)';
+        title.style.borderColor = 'var(--green)';
+
+        let html = `
+            <div class="data-grid">
+                <div class="data-item"><span class="label">Tür</span><span class="value">${d.type}</span></div>
+                <div class="data-item"><span class="label">Boyut</span><span class="value">${d.sizeStr} (Mod ${d.mod})</span></div>
+                <div class="data-item"><span class="label">Eksen Eğimi</span><span class="value">${d.tilt}</span></div>
+                <div class="data-item"><span class="label">Gün Uzunluğu</span><span class="value">${d.day}</span></div>
+                <div class="data-item"><span class="label">Uydular</span><span class="value">${d.moons}</span></div>
+                <div class="data-item"><span class="label">Yerçekimi</span><span class="value">${d.grav}</span></div>
+                <div class="data-item"><span class="label">Atmosfer</span><span class="value">${d.atmoStr}</span></div>
+                <div class="data-item"><span class="label">İklim</span><span class="value">${d.clim}</span></div>
+                <div class="data-item"><span class="label">Hidrosfer</span><span class="value">%${d.hydroPct}</span></div>
+                <div class="data-item" style="grid-column: span 2"><span class="label">Arazi</span><span class="value">${d.terrain}</span></div>
+                
+                <div class="data-item" style="grid-column: 1 / -1; margin-top:10px; border-color:var(--green);">
+                    <span class="label">Biyosfer</span>
+                    <span class="value">${d.bioStr}</span>
+                </div>
+        `;
+
+        if(d.civData) {
+            html += `
+                <div class="data-item"><span class="label">Baskın Tür</span><span class="value">${d.civData.species}</span></div>
+                <div class="data-item"><span class="label">Teknoloji Seviyesi</span><span class="value">${d.civData.tech}</span></div>
+                <div class="data-item"><span class="label">Nüfus</span><span class="value">${d.civData.pop}</span></div>
+                <div class="data-item"><span class="label">Toplum</span><span class="value">${d.civData.soc}</span></div>
+                <div class="data-item"><span class="label">Ekonomi</span><span class="value">${d.civData.eco}</span></div>
+            `;
+        } else {
+             html += `<div class="data-item"><span class="label">Medeniyet</span><span class="value" style="opacity:0.5">YOK</span></div>`;
+        }
+
+        html += `<div class="data-item"><span class="label">Güneş Fenomeni</span><span class="value" style="${d.hasSign?'color:var(--alert)':''}">${d.solarTxt}</span></div></div>`;
+
+        if(d.hasSign) {
+            html += `
+                <div class="warning-panel">
+                    <div class="warning-header">>> ZENO-ARKEOLOJİ: GÜNEŞ İMİ <<</div>
+                    <div class="data-grid">
+                        <div class="data-item"><span class="label">Mimari</span><span class="value">${d.signData.arch}</span></div>
+                        <div class="data-item"><span class="label">İşlev</span><span class="value">${d.signData.func}</span></div>
+                        <div class="data-item">
+                            <span class="label">Psikonik Etkinlik (${d.signData.pLvl})</span>
+                            <span class="sub-value">${d.signData.pEff}</span>
+                        </div>
+                        <div class="data-item">
+                            <span class="label">Biyo-Profil (${d.signData.bLvl})</span>
+                            <span class="sub-value">${d.signData.bEff}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        content.innerHTML = html;
+        panel.style.display = 'block';
+        panel.scrollIntoView({ behavior: "smooth" });
+    }
+
+</script>
+</body>
+</html>

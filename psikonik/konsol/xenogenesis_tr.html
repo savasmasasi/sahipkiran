@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ZENOGENEZ - Entomon Laboratuvarı</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --green: #33ff33; 
+            --dim-green: #1a881a;
+            --bg: #050505;
+            --panel-bg: rgba(0, 20, 0, 0.85);
+            --border: 2px solid var(--green);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--green);
+            font-family: 'VT323', monospace;
+            font-size: 1.2rem;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            text-shadow: 0 0 3px var(--dim-green);
+        }
+
+        /* CRT Overlay */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none;
+            z-index: 999;
+        }
+
+        .main-interface {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 20px;
+            width: 100%;
+            max-width: 1000px;
+        }
+
+        @media (max-width: 800px) {
+            .main-interface { grid-template-columns: 1fr; }
+        }
+
+        .panel {
+            border: var(--border);
+            background: var(--panel-bg);
+            padding: 20px;
+            box-shadow: 0 0 20px var(--dim-green) inset;
+            position: relative;
+        }
+
+        h2 {
+            margin-top: 0;
+            border-bottom: 1px dashed var(--green);
+            padding-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-align: center;
+        }
+
+        /* Buttons & Inputs */
+        .big-btn {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin-top: 20px;
+            background: #000;
+            color: var(--green);
+            border: 2px solid var(--green);
+            font-family: 'VT323', monospace;
+            font-size: 1.5rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .big-btn:hover {
+            background: var(--green);
+            color: #000;
+            box-shadow: 0 0 15px var(--green);
+        }
+
+        .checkbox-wrapper {
+            margin-top: 15px;
+            border: 1px solid var(--dim-green);
+            padding: 10px;
+            background: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        input[type="checkbox"] {
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--green);
+            margin-right: 10px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        input[type="checkbox"]:checked::after {
+            content: 'X';
+            position: absolute;
+            top: -5px; left: 2px;
+            font-size: 20px;
+            color: var(--green);
+            font-weight: bold;
+        }
+
+        /* Output Styling */
+        .specimen-card {
+            border: 2px solid var(--green);
+            padding: 20px;
+            background: #000;
+            margin-bottom: 20px;
+        }
+
+        .specimen-header {
+            border-bottom: 2px double var(--green);
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .specimen-name { font-size: 2rem; line-height: 1; text-transform: uppercase; }
+        .specimen-class { font-size: 1rem; color: var(--dim-green); }
+
+        .stat-line {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dotted var(--dim-green);
+            padding: 5px 0;
+        }
+
+        .bio-analysis {
+            margin-top: 20px;
+            font-size: 1rem;
+            color: #aaddaa;
+        }
+        
+        .bio-entry {
+            margin-bottom: 10px;
+        }
+        .bio-title { font-weight: bold; text-decoration: underline; color: var(--green); }
+        .bio-desc { font-style: italic; opacity: 0.8; }
+
+        .cost-badge {
+            display: inline-block;
+            background: var(--dim-green);
+            color: #000;
+            padding: 2px 6px;
+            font-size: 0.9rem;
+            margin-left: 10px;
+        }
+
+        .mutation-box {
+            border: 1px dashed var(--green);
+            padding: 10px;
+            margin-top: 15px;
+            background: rgba(50, 0, 0, 0.3);
+        }
+
+        .back-btn {
+            position: fixed; top: 20px; left: 20px; border: 1px solid var(--green); padding: 5px 10px; text-decoration: none; color: var(--green); background: #000; z-index: 1000;
+        }
+        .back-btn:hover { background: var(--green); color: #000; }
+
+    </style>
+</head>
+<body>
+
+<a href="index.html" class="back-btn" onclick="history.back()">< GERİ</a>
+
+<div class="main-interface">
+    
+    <div class="panel">
+        <h2>>> LAB KONTROLLERİ</h2>
+        
+        <p style="text-align: center; color: var(--dim-green);">
+            RASTGELE GENETİK<br>BİRLEŞTİRMEYİ BAŞLAT
+        </p>
+
+        <div class="checkbox-wrapper">
+            <label style="cursor: pointer; display: flex; align-items: center;">
+                <input type="checkbox" id="kingToggle"> 
+                <span>ALFA / KRAL VARYANTI</span>
+            </label>
+        </div>
+
+        <button class="big-btn" onclick="generateSpecimen()">NUMUNE ÜRET</button>
+        
+        <div style="margin-top: 30px; font-size: 0.9rem; color: var(--dim-green); border-top: 1px solid var(--dim-green); padding-top: 10px;">
+            > KOVAN ZİHNİNE BAĞLANDI<br>
+            > DNA DİZİLEYİCİ HAZIR<br>
+            > GİRDİ BEKLENİYOR...
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>>> NUMUNE ANALİZİ</h2>
+        
+        <div id="outputArea" style="display: none;">
+            <div class="specimen-card">
+                <div class="specimen-header">
+                    <div>
+                        <div class="specimen-class" id="outClass">SÜRÜ SINIFI</div>
+                        <div class="specimen-name" id="outName">ZENO-001</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <span style="font-size: 0.8rem; color: var(--dim-green);">BİYOMORF DEĞERİ</span><br>
+                        <span id="outPoints" style="font-size: 1.5rem;">0 PUAN</span>
+                    </div>
+                </div>
+
+                <div class="stat-line">
+                    <span>MENZİLLİ BİYOMORF</span>
+                    <span id="outRanged">Yok</span>
+                </div>
+                <div class="stat-line">
+                    <span>DÖVÜŞ BİYOMORFU</span>
+                    <span id="outMelee">Yok</span>
+                </div>
+                
+                <div id="mutationContainer" class="mutation-box" style="display: none;">
+                    <strong>>> ALFA MUTASYONU TESPİT EDİLDİ:</strong><br>
+                    <span id="outMutation">Yok</span>
+                </div>
+            </div>
+
+            <h3>>> BİYOLOJİK ANALİZ</h3>
+            <div class="bio-analysis" id="bioText">
+            </div>
+        </div>
+
+        <div id="placeholder" style="text-align: center; padding-top: 50px; opacity: 0.5;">
+            [ VERİ YOK ]<br>ÜRET TUŞUNA BASIN
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // === DATA TABLES ===
+
+    const RANGED_TABLE = [
+        { d6: 1, n: "Örü memesi", r: "20", s: "-", p: 1, spec: "", desc: "Ağız içinde bulunan, yüksek gerilimli protein zincirini sentezleyen ve fırlatan şişkin bir organ. Bu yapışkan ağ, hava ile temas ettiğinde anında sertleşir. Hedefi yaralamaz, ancak hedefin bir sonraki hareketini yarı yarıya azaltır." },
+        { d6: 2, n: "Dalağan", r: "15", s: "4", p: 1.5, spec: "Geri tepme", desc: "Entomonun kitin plakalarını titreştirerek fırlatabileceği dikenli, tahriş edici kıl yamaları." },
+        { d6: 3, n: "Püskürtücü", r: "30", s: "3", p: 1.5, spec: "seri", desc: "Yüksek asitli, yapışkan bir sıvıyı basınçlı bir şekilde püskürtebilen kaslı bir valf." },
+        { d6: 4, n: "Cırıldak", r: "20", s: "-", p: 2, spec: "psikonik", desc: "Bacaklarda veya kanatlarda bulunan taraksı yapılar, hipersonik hızlarda birbirine sürtündüğünde, kafa karıştırıcı bir psikoakustik cırıltı çıkarır. Hedef, moral sınamasından geçmelidir, aksi takdirde turun geri kalanında kafası karışır (başka hiçbir eylemde bulunamaz)." },
+        { d6: 5, n: "Pigidyal püskürtücü", r: "15", s: "4", p: 1.5, spec: "artyakış", desc: "Uçucu hidrokinonlar içeren özel bir karın bezi. Püskürtüldüğünde, kimyasallar ekzotermik tepkimeye girerek kaynar sıvı ateş püskürtür." },
+        { d6: 6, n: "Tükürücü", r: "25", s: "3", p: 1, spec: "", desc: "Entomonun bezlerinde sentezlenen nörotoksik zehri tükürmesini sağlayan bir organ." }
+    ];
+
+    const MELEE_TABLE = [
+        { d6: 1, n: "Pençe", r: "-", s: "Saldıran", p: 0.5, spec: "", desc: "Tek moleküler bir uçla biten, büyük, kavisli, kitinli bir uzantı." },
+        { d6: 2, n: "Kıskaç", r: "-", s: "Saldıran", p: 0.5, spec: "", desc: "Ağır, ezici kıskaç benzeri uzantılar, genellikle karın bölgesinin arkasında veya ön bacaklarda bulunur." },
+        { d6: 3, n: "İğne", r: "-", s: "Saldıran", p: 1, spec: "kalkankıran", desc: "Nekrotik zehir vermek için kullanılan geri çekilebilir, hipodermik mızrak." },
+        { d6: 4, n: "Hortum", r: "-", s: "3", p: 0.5, spec: "", desc: "Sindirim enzimlerini enjekte eden, hedefin içini tüketmek için sıvılaştıran iğne benzeri beslenme tüpü." },
+        { d6: 5, n: "Yırtıcı bacak", r: "-", s: "4", p: 1, spec: "", desc: "Avını yakalamak için tasarlanmış, katlanabilir, sivri ön bacaklar." },
+        { d6: 6, n: "Çenek", r: "-", s: "5", p: 2, spec: "kalkankıran", desc: "Hidrolik kas keseleriyle çalışan devasa, tırtıklı çeneler." }
+    ];
+
+    const MUTATION_TABLE = [
+        { d6: 1, n: "Asidik kan", p: 5, desc: "Yaratık, ölümünde bile düşmanca davranacak şekilde evrimleşmiştir. Bu figür göğüs göğse dövüşte öldürüldüğünde, kaide teması halinde olan tüm düşman figürleri otomatik olarak KUV 3 şiddetinde bir darbe alır." },
+        { d6: 2, n: "Psişik ustura", p: 5, desc: "Yaratık rahatsız edici bir psişik dalga yayar. Bu figür hayatta olduğu sürece, 10 cm içindeki tüm entomon olmayan düşman figürlerinin MORAL değeri 1 azalır." },
+        { d6: 3, n: "Dış iskelet", p: 5, desc: "Sertleşmiş kitinli bir zırh, yaratığın tüm vücudunu kaplar. DAYANIM’a +1." },
+        { d6: 4, n: "İyileşme", p: 5, desc: "Yaratık, en ölümcül saldırılardan bile sağ çıkacak şekilde evrimleşmiştir. Her turun başında bir zar atın. 6 gelirse, aldığı 1 yara iyileşir." },
+        { d6: 5, n: "Devasa", p: 5, desc: "Yaratık o kadar büyüktür ki, her zaman yüksek bir yerden saldırır gibi saldırır. Saldırı zarlarına +1 alır. Ayrıca kendisine karşı yapılan menzilli saldırılarda, saldıran figür zarına +1 bonus alır." },
+        { d6: 6, n: "Göz perdesi", p: 5, desc: "Yaratığın, görüşünü iyileştiren, büyüteçli ikincil bir şeffaf göz kapağı vardır. Atış zarlarına +1." }
+    ];
+
+    // === NEW NAMING LOGIC (TURKISH) ===
+    const INSECT_ROOTS = [
+        "Vesp",       // Vespon
+        "Odonat",     // Odonaton
+        "Melyot",     // Meliotton
+        "Dipter",     // Dipteron
+        "İzopter",    // Izopteron
+        "Mirmek",     // Myrmec -> Mirmekon
+        "Ortopter",   // Orthopter -> Ortopteron
+        "Koleopter",  // Coleopter -> Koleopteron
+        "Trikopter",  // Trichopter -> Trikopteron
+        "Arakn",      // Arachn -> Araknon
+        "Mantid",     // Mantidon
+        "Lepidopter", // Lepidopteron
+        "Hemipter"    // Hemipteron
+    ];
+
+    // Standard Roles 
+    const DRONE_ROLES = [
+        "Avcı", 
+        "İzci", 
+        "Sürücü", 
+        "Tükürücü", 
+        "Zıplayıcı", 
+        "Kazıcı", 
+        "Delici", 
+        "Dron", 
+        "İşçi", 
+        "Biçici"
+    ];
+
+    // Alpha Roles
+    const KING_ROLES = [
+        "Asil", 
+        "Bağ", 
+        "Ezici", 
+        "Tiran", 
+        "Zirve", 
+        "Hükümdar", 
+        "İmperator", 
+        "Golyat"
+    ];
+
+    function rollD6() {
+        return Math.floor(Math.random() * 6);
+    }
+
+    function generateName(isKing) {
+        const root = INSECT_ROOTS[Math.floor(Math.random() * INSECT_ROOTS.length)];
+        let role = "";
+        
+        if(isKing) {
+            role = KING_ROLES[Math.floor(Math.random() * KING_ROLES.length)];
+        } else {
+            role = DRONE_ROLES[Math.floor(Math.random() * DRONE_ROLES.length)];
+        }
+
+        // Combine: Root + "on" + Space + Role
+        return `${root}on ${role}`;
+    }
+
+    function generateSpecimen() {
+        document.getElementById('placeholder').style.display = 'none';
+        document.getElementById('outputArea').style.display = 'block';
+
+        // 1. Determine Class & Name
+        const isKing = document.getElementById('kingToggle').checked;
+        const className = isKing ? "ALFA / KRAL SINIFI" : "ALT-TÜR SÜRÜ DRONU";
+        const name = generateName(isKing);
+
+        // 2. Roll Weapons
+        const rIndex = rollD6();
+        const mIndex = rollD6();
+        
+        const rWeapon = RANGED_TABLE[rIndex];
+        const mWeapon = MELEE_TABLE[mIndex];
+
+        // 3. Roll Mutation (if King)
+        let mutation = null;
+        if(isKing) {
+            const mutIndex = rollD6();
+            mutation = MUTATION_TABLE[mutIndex];
+        }
+
+        // 4. Calculate Points (Weapons + Mutation only)
+        let totalPts = rWeapon.p + mWeapon.p;
+        if(mutation) totalPts += mutation.p;
+
+        // 5. Render to DOM
+        document.getElementById('outClass').innerText = className;
+        document.getElementById('outName').innerText = name;
+        document.getElementById('outPoints').innerText = totalPts + " PUAN";
+
+        let rText = `${rWeapon.n} (E:${rWeapon.r} K:${rWeapon.s})`;
+        if(rWeapon.spec) rText += ` / ${rWeapon.spec}`;
+        document.getElementById('outRanged').innerHTML = rText + `<span class="cost-badge">${rWeapon.p}</span>`;
+
+        let mText = `${mWeapon.n} (K:${mWeapon.s})`;
+        if(mWeapon.spec) mText += ` / ${mWeapon.spec}`;
+        document.getElementById('outMelee').innerHTML = mText + `<span class="cost-badge">${mWeapon.p}</span>`;
+
+        const mutContainer = document.getElementById('mutationContainer');
+        if(mutation) {
+            mutContainer.style.display = 'block';
+            document.getElementById('outMutation').innerHTML = `${mutation.n} <span class="cost-badge">${mutation.p}</span>`;
+        } else {
+            mutContainer.style.display = 'none';
+        }
+
+        // 6. Bio Analysis Text
+        let bioHtml = "";
+        bioHtml += `<div class="bio-entry"><div class="bio-title">${rWeapon.n}</div><div class="bio-desc">${rWeapon.desc}</div></div>`;
+        bioHtml += `<div class="bio-entry"><div class="bio-title">${mWeapon.n}</div><div class="bio-desc">${mWeapon.desc}</div></div>`;
+
+        if(mutation) {
+            bioHtml += `<div class="bio-entry"><div class="bio-title">${mutation.n}</div><div class="bio-desc">${mutation.desc}</div></div>`;
+        }
+
+        document.getElementById('bioText').innerHTML = bioHtml;
+    }
+
+</script>
+
+</body>
+</html>

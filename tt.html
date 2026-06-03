@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sahipkıran: Top & Tüfek Figür Puan Hesaplayıcı</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .container {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            margin-top: 20px;
+        }
+        h1 {
+            color: #1f2937;
+            text-align: center;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #374151;
+            font-weight: 600;
+        }
+        input[type="number"], select {
+            width: 100%;
+            padding: 10px 12px;
+            margin-bottom: 15px;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 1rem;
+            color: #374151;
+            transition: border-color 0.2s;
+        }
+        input[type="number"]:focus, select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+        .grid-cols-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .section-title {
+            font-weight: 700;
+            color: #1f2937;
+            margin-top: 20px;
+            margin-bottom: 15px;
+            font-size: 1.25rem;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 5px;
+        }
+        .equipment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            background-color: #f9fafb;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        .equipment-item span {
+            color: #4b5563;
+        }
+        .equipment-item input[type="checkbox"] {
+            width: auto; /* Adjust width for checkbox */
+            margin-bottom: 0;
+            transform: scale(1.2); /* Make checkbox slightly larger */
+        }
+        .total-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #e5e7eb;
+            text-align: right;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #1f2937;
+        }
+        .total-section span {
+            color: #4f46e5;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .checkbox-item input[type="checkbox"] {
+            width: auto;
+            margin-bottom: 0;
+        }
+        .dayanim-display {
+            font-weight: 600;
+            color: #4f46e5;
+            margin-left: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sahipkıran Figür Değer Hesaplayıcı</h1>
+
+        <div class="section-title">Figür Profili</div>
+        <div class="grid-cols-2">
+            <div>
+                <label for="hrk">HRK (Hareket)</label>
+                <input type="number" id="hrk" value="8" min="1" oninput="calculatePoints()">
+            </div>
+            <div>
+                <label for="ats">ATŞ (Atış)</label>
+                <select id="ats" onchange="calculatePoints()">
+                    <option value="6">6+</option>
+                    <option value="5">5+</option>
+                    <option value="4" selected>4+</option>
+                    <option value="3">3+</option>
+                    <option value="2">2+</option>
+                    <option value="1">1+</option>
+                </select>
+            </div>
+            <div>
+                <label for="dvs">DVŞ (Dövüş)</label>
+                <input type="number" id="dvs" value="3" min="1" oninput="calculatePoints()">
+            </div>
+            <div>
+                <label for="kuv">KUV (Kuvvet)</label>
+                <input type="number" id="kuv" value="3" min="1" oninput="calculatePoints()">
+            </div>
+            <div>
+                <label for="dyn">DYN (Dayanım) <span class="dayanim-display">(Etkili: <span id="effectiveDynDisplay">3</span>)</span></label>
+                <input type="number" id="dyn" value="3" min="1" oninput="calculatePoints()">
+            </div>
+            <div>
+                <label for="mrl">MRL (Moral)</label>
+                <input type="number" id="mrl" value="7" min="1" oninput="calculatePoints()">
+            </div>
+        </div>
+
+        <div class="section-title">Beceriler (Etkiket)</div>
+        <div class="grid-cols-2">
+            <div>
+                <label for="saldirgan">Saldırgan (Varsayılan 1)</label>
+                <input type="number" id="saldirgan" value="1" min="1" oninput="calculatePoints()">
+            </div>
+            <div>
+                <label for="dayanikli">Çetin (Varsayılan 1)</label>
+                <input type="number" id="dayanikli" value="1" min="1" oninput="calculatePoints()">
+            </div>
+            <div class="checkbox-group">
+                <div class="checkbox-item">
+                    <input type="checkbox" id="atli" onchange="calculatePoints()">
+                    <label for="atli" class="mb-0">Atlı</label>
+                </div>
+                <div class="checkbox-item">
+                    <input type="checkbox" id="izci" onchange="calculatePoints()">
+                    <label for="izci" class="mb-0">İzci (+3 Puan)</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="section-title">Teçhizat</div>
+        <div class="grid-cols-2">
+            <div>
+                <label class="section-title mb-3">Menzilli Silahlar</label>
+                <div class="equipment-item">
+                    <label for="tabanca" class="mb-0">Tabanca (0.5)</label>
+                    <input type="checkbox" id="tabanca" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="otomatikTabanca" class="mb-0">Otomatik tabanca (1)</label>
+                    <input type="checkbox" id="otomatikTabanca" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="avTufegi" class="mb-0">Av Tüfeği (pompalı) (1)</label>
+                    <input type="checkbox" id="avTufegi" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="karabina" class="mb-0">Karabina (1)</label>
+                    <input type="checkbox" id="karabina" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="tufekKurmali" class="mb-0">Tüfek (kurmalı) (1)</label>
+                    <input type="checkbox" id="tufekKurmali" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="nisanciTufegi" class="mb-0">Nişancı tüfeği (5)</label>
+                    <input type="checkbox" id="nisanciTufegi" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="otomatikTufek" class="mb-0">Otomatik tüfek (2)</label>
+                    <input type="checkbox" id="otomatikTufek" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="tanksavarTufek" class="mb-0">Tanksavar tüfek (50)</label>
+                    <input type="checkbox" id="tanksavarTufek" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="bombaAtarTufek" class="mb-0">Bomba-atar Tüfek (30)</label>
+                    <input type="checkbox" id="bombaAtarTufek" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="alevMakinesi" class="mb-0">Alev Makinesi (2)</label>
+                    <input type="checkbox" id="alevMakinesi" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="hafifMakineliSilah" class="mb-0">Hafif Makineli Silah (HMS) (5)</label>
+                    <input type="checkbox" id="hafifMakineliSilah" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="makineliSilah" class="mb-0">Makineli Silah (10)</label>
+                    <input type="checkbox" id="makineliSilah" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="agirMakineliSilah" class="mb-0">Ağır Makineli Silah (AMS) (15)</label>
+                    <input type="checkbox" id="agirMakineliSilah" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="roketatar" class="mb-0">Roketatar (30)</label>
+                    <input type="checkbox" id="roketatar" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="elBombasi" class="mb-0">El bombası/molotof kokteyli (1)</label>
+                    <input type="checkbox" id="elBombasi" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="sisBombasi" class="mb-0">Sis bombası (1)</label>
+                    <input type="checkbox" id="sisBombasi" onchange="calculatePoints()">
+                </div>
+            </div>
+            <div>
+                <label class="section-title mb-3">Dövüş Silahları</label>
+                <div class="equipment-item">
+                    <label for="süngü" class="mb-0">Süngü (1)</label>
+                    <input type="checkbox" id="süngü" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="bicak" class="mb-0">Bıçak (FREE)</label>
+                    <input type="checkbox" id="bicak" checked onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="cop" class="mb-0">Cop (0.5)</label>
+                    <input type="checkbox" id="cop" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="hancer" class="mb-0">Hançer (1)</label>
+                    <input type="checkbox" id="hancer" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="balta" class="mb-0">Balta (1)</label>
+                    <input type="checkbox" id="balta" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="pala" class="mb-0">Pala (0.5)</label>
+                    <input type="checkbox" id="pala" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="kilic" class="mb-0">Kılıç (1)</label>
+                    <input type="checkbox" id="kilic" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="balyoz" class="mb-0">Balyoz (1)</label>
+                    <input type="checkbox" id="balyoz" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="kurek" class="mb-0">Kürek (0.5)</label>
+                    <input type="checkbox" id="kurek" onchange="calculatePoints()">
+                </div>
+
+                <label class="section-title mb-3 mt-5">Zırhlar</label>
+                <div class="equipment-item">
+                    <label for="hafifZirh" class="mb-0">Hafif Zırh (0.5)</label>
+                    <input type="checkbox" id="hafifZirh" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="agirZirh" class="mb-0">Ağır Zırh (1)</label>
+                    <input type="checkbox" id="agirZirh" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="karmaZirh" class="mb-0">Karma Zırh (1.5)</label>
+                    <input type="checkbox" id="karmaZirh" onchange="calculatePoints()">
+                </div>
+                <div class="equipment-item">
+                    <label for="kalkan" class="mb-0">Kalkan (0.5)</label>
+                    <input type="checkbox" id="kalkan" onchange="calculatePoints()">
+                </div>
+            </div>
+        </div>
+
+        <div class="total-section">
+            Toplam Figür Değeri: <span id="totalPoints">0</span>
+        </div>
+    </div>
+
+    <script>
+        // Default Rick's profile values
+        const RICK_PROFILE = {
+            hrk: 8,
+            ats: 4,
+            dvs: 3,
+            kuv: 3,
+            dyn: 3,
+            mrl: 7,
+            saldirgan: 1, // Default 1 attack
+            dayanikli: 1, // Default 1 wound
+            atli: false,
+            izci: false, // New İZCİ ability default
+            // Equipment (default to no equipment checked except if specified)
+            tabanca: false, otomatikTabanca: false, avTufegi: false, karabina: false, tufekKurmali: false,
+            nisanciTufegi: false, otomatikTufek: false, tanksavarTufek: false, bombaAtarTufek: false,
+            alevMakinesi: false, hafifMakineliSilah: false, makineliSilah: false, agirMakineliSilah: false,
+            roketatar: false, elBombasi: false, sisBombasi: false,
+            süngü: false, bicak: true, // Bıçak is true by default (free)
+            cop: false, hancer: false, balta: false, pala: false, kilic: false,
+            balyoz: false, kurek: false,
+            hafifZirh: false, agirZirh: false, karmaZirh: false, kalkan: false
+        };
+
+        // Point costs for each stat adjustment
+        const STAT_COSTS = {
+            hrk: 0.5,
+            ats: 0.25,
+            dvs: 0.5,
+            kuv: 1,
+            dyn: 1,
+            mrl: 0.25
+        };
+
+        // Equipment point values (cost for one item)
+        const EQUIPMENT_COSTS = {
+            tabanca: 0.5, otomatikTabanca: 1, avTufegi: 1, karabina: 1, tufekKurmali: 1,
+            nisanciTufegi: 5, otomatikTufek: 2, tanksavarTufek: 50, bombaAtarTufek: 30,
+            alevMakinesi: 2, hafifMakineliSilah: 5, makineliSilah: 10, agirMakineliSilah: 15,
+            roketatar: 30, elBombasi: 1, sisBombasi: 1,
+
+            süngü: 1, bicak: 0.5, // This is the cost if it *weren't* free, used for logic
+            cop: 0.5, hancer: 1, balta: 1, pala: 0.5, kilic: 1,
+            balyoz: 1, kurek: 0.5,
+
+            hafifZirh: 0.5, agirZirh: 1, karmaZirh: 1.5, kalkan: 0.5
+        };
+
+        // Multipliers for high-point figures
+        const MULTIPLIERS = [
+            { range: [11, 15], multiplier: 1.5 },
+            { range: [16, 20], multiplier: 2 },
+            { range: [21, 30], multiplier: 3 },
+            { range: [31, 40], multiplier: 4 },
+            { range: [41, 50], multiplier: 5 }
+        ];
+
+        /**
+         * Initializes the input fields with Rick's default profile values.
+         */
+        function initializeCalculator() {
+            document.getElementById('hrk').value = RICK_PROFILE.hrk;
+            document.getElementById('ats').value = RICK_PROFILE.ats;
+            document.getElementById('dvs').value = RICK_PROFILE.dvs;
+            document.getElementById('kuv').value = RICK_PROFILE.kuv;
+            document.getElementById('dyn').value = RICK_PROFILE.dyn;
+            document.getElementById('mrl').value = RICK_PROFILE.mrl;
+            document.getElementById('saldirgan').value = RICK_PROFILE.saldirgan;
+            document.getElementById('dayanikli').value = RICK_PROFILE.dayanikli;
+            document.getElementById('atli').checked = RICK_PROFILE.atli;
+            document.getElementById('izci').checked = RICK_PROFILE.izci; // Initialize İZCİ
+
+            // Initialize equipment checkboxes
+            for (const key in EQUIPMENT_COSTS) {
+                if (document.getElementById(key)) {
+                    document.getElementById(key).checked = RICK_PROFILE[key] !== undefined ? RICK_PROFILE[key] : false;
+                }
+            }
+
+            calculatePoints(); // Calculate initial points
+        }
+
+        /**
+         * Calculates the total unit points based on the current input values.
+         */
+        function calculatePoints() {
+            let baseCost = 5; // Base cost of a unit with standard profile
+
+            // Get current profile values
+            const hrk = parseInt(document.getElementById('hrk').value);
+            const ats = document.getElementById('ats').value; // String value like '4' for 4+
+            const dvs = parseInt(document.getElementById('dvs').value);
+            const kuv = parseInt(document.getElementById('kuv').value);
+            const dyn = parseInt(document.getElementById('dyn').value); // Base DYN value from input
+            const mrl = parseInt(document.getElementById('mrl').value);
+
+            const saldirgan = parseInt(document.getElementById('saldirgan').value);
+            const dayanikli = parseInt(document.getElementById('dayanikli').value);
+            const atli = document.getElementById('atli').checked;
+            const izci = document.getElementById('izci').checked; // Get İZCİ state
+
+            let profilePoints = 0;
+
+            // Calculate points for HRK
+            profilePoints += (hrk - RICK_PROFILE.hrk) * STAT_COSTS.hrk;
+
+            // Calculate points for ATŞ (Shooting)
+            const rickAtsValueNum = RICK_PROFILE.ats;
+            const currentAtsValueNum = parseInt(ats);
+            profilePoints += (rickAtsValueNum - currentAtsValueNum) * STAT_COSTS.ats;
+
+            // Calculate points for DVŞ, KUV, DYN, MRL
+            profilePoints += (dvs - RICK_PROFILE.dvs) * STAT_COSTS.dvs;
+            profilePoints += (kuv - RICK_PROFILE.kuv) * STAT_COSTS.kuv;
+            profilePoints += (dyn - RICK_PROFILE.dyn) * STAT_COSTS.dyn;
+            profilePoints += (mrl - RICK_PROFILE.mrl) * STAT_COSTS.mrl;
+
+            // Add base cost to profile points
+            let currentBasePoints = baseCost + profilePoints;
+
+            // Special Abilities
+            if (saldirgan > 1) {
+                currentBasePoints += (saldirgan - 1) * 5;
+            }
+
+            if (dayanikli > 1) {
+                currentBasePoints += (dayanikli - 1) * 4;
+            }
+
+            if (atli) {
+                currentBasePoints += 5;
+            }
+            if (izci) { // Add points for İZCİ
+                currentBasePoints += 3;
+            }
+
+            // Apply multipliers for high-point figures
+            let finalBasePoints = currentBasePoints;
+            for (let i = MULTIPLIERS.length - 1; i >= 0; i--) {
+                const range = MULTIPLIERS[i].range;
+                const multiplier = MULTIPLIERS[i].multiplier;
+                if (currentBasePoints >= range[0] && currentBasePoints <= range[1]) {
+                    finalBasePoints = currentBasePoints * multiplier;
+                    break;
+                }
+            }
+            if (currentBasePoints > 50) {
+                const extraTens = Math.floor((currentBasePoints - 50) / 10);
+                finalBasePoints = currentBasePoints * (5 + extraTens);
+            }
+
+
+            // Calculate equipment points (using checkboxes) and effective Dayanım
+            let equipmentPoints = 0;
+            let armorBonusDyn = 0;
+
+            // Ranged Weapons
+            if (document.getElementById('tabanca').checked) equipmentPoints += EQUIPMENT_COSTS.tabanca;
+            if (document.getElementById('otomatikTabanca').checked) equipmentPoints += EQUIPMENT_COSTS.otomatikTabanca;
+            if (document.getElementById('avTufegi').checked) equipmentPoints += EQUIPMENT_COSTS.avTufegi;
+            if (document.getElementById('karabina').checked) equipmentPoints += EQUIPMENT_COSTS.karabina;
+            if (document.getElementById('tufekKurmali').checked) equipmentPoints += EQUIPMENT_COSTS.tufekKurmali;
+            if (document.getElementById('nisanciTufegi').checked) equipmentPoints += EQUIPMENT_COSTS.nisanciTufegi;
+            if (document.getElementById('otomatikTufek').checked) equipmentPoints += EQUIPMENT_COSTS.otomatikTufek;
+            if (document.getElementById('tanksavarTufek').checked) equipmentPoints += EQUIPMENT_COSTS.tanksavarTufek;
+            if (document.getElementById('bombaAtarTufek').checked) equipmentPoints += EQUIPMENT_COSTS.bombaAtarTufek;
+            if (document.getElementById('alevMakinesi').checked) equipmentPoints += EQUIPMENT_COSTS.alevMakinesi;
+            if (document.getElementById('hafifMakineliSilah').checked) equipmentPoints += EQUIPMENT_COSTS.hafifMakineliSilah;
+            if (document.getElementById('makineliSilah').checked) equipmentPoints += EQUIPMENT_COSTS.makineliSilah;
+            if (document.getElementById('agirMakineliSilah').checked) equipmentPoints += EQUIPMENT_COSTS.agirMakineliSilah;
+            if (document.getElementById('roketatar').checked) equipmentPoints += EQUIPMENT_COSTS.roketatar;
+            if (document.getElementById('elBombasi').checked) equipmentPoints += EQUIPMENT_COSTS.elBombasi;
+            if (document.getElementById('sisBombasi').checked) equipmentPoints += EQUIPMENT_COSTS.sisBombasi;
+
+            // Melee Weapons
+            if (document.getElementById('süngü').checked) equipmentPoints += EQUIPMENT_COSTS.süngü;
+            if (document.getElementById('bicak').checked) {
+                // Bıçak is free by default, so no cost added if checked.
+                // If you later want to add multiple bıçak or make it cost if not default, this logic would change.
+            }
+            if (document.getElementById('cop').checked) equipmentPoints += EQUIPMENT_COSTS.cop;
+            if (document.getElementById('hancer').checked) equipmentPoints += EQUIPMENT_COSTS.hancer;
+            if (document.getElementById('balta').checked) equipmentPoints += EQUIPMENT_COSTS.balta;
+            if (document.getElementById('pala').checked) equipmentPoints += EQUIPMENT_COSTS.pala;
+            if (document.getElementById('kilic').checked) equipmentPoints += EQUIPMENT_COSTS.kilic;
+            if (document.getElementById('balyoz').checked) equipmentPoints += EQUIPMENT_COSTS.balyoz;
+            if (document.getElementById('kurek').checked) equipmentPoints += EQUIPMENT_COSTS.kurek;
+
+
+            // Armor calculations for points and Dayanım bonus
+            if (document.getElementById('hafifZirh').checked) {
+                equipmentPoints += EQUIPMENT_COSTS.hafifZirh;
+                armorBonusDyn += 1;
+            }
+            if (document.getElementById('agirZirh').checked) {
+                equipmentPoints += EQUIPMENT_COSTS.agirZirh;
+                armorBonusDyn += 2;
+            }
+            if (document.getElementById('karmaZirh').checked) {
+                equipmentPoints += EQUIPMENT_COSTS.karmaZirh;
+                armorBonusDyn += 3;
+            }
+            if (document.getElementById('kalkan').checked) {
+                equipmentPoints += EQUIPMENT_COSTS.kalkan;
+                armorBonusDyn += 1; // Kalkan also adds +1 Dayanım
+            }
+
+            // Calculate effective Dayanım for display
+            const effectiveDyn = dyn + armorBonusDyn;
+            document.getElementById('effectiveDynDisplay').textContent = effectiveDyn;
+
+
+            // Total points
+            let totalPoints = finalBasePoints + equipmentPoints;
+
+            // Ensure minimum total points is 1
+            if (totalPoints < 1) {
+                totalPoints = 1;
+            }
+
+            document.getElementById('totalPoints').textContent = totalPoints.toFixed(2);
+        }
+
+        // Initialize the calculator when the page loads
+        window.onload = initializeCalculator;
+    </script>
+</body>
+</html>

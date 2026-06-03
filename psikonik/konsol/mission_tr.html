@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Taktiksel Görev Üreteci v3.1</title>
+    <style>
+        /* --- RETRO MILITARY TERMINAL STYLE --- */
+        @import url('https://fonts.googleapis.com/css2?family=VT323&display=swap');
+
+        :root {
+            --phosphor: #33ff33; /* Standard Green */
+            --phosphor-dim: #1a881a;
+            --alert: #ff3333;     /* Red for high aggression/complications */
+            --amber: #ffcc00;     /* Amber for Special Ops */
+            --bg: #050505;
+            --panel-bg: rgba(0, 15, 0, 0.85);
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--phosphor);
+            font-family: 'VT323', monospace;
+            font-size: 1.3rem;
+            margin: 0;
+            padding: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+            text-shadow: 0 0 3px var(--phosphor-dim);
+            overflow: hidden; 
+        }
+
+        /* CRT Scanline Overlay */
+        body::after {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                        linear-gradient(90deg, rgba(255,0,0,0.06), rgba(0,255,0,0.02), rgba(0,0,255,0.06));
+            background-size: 100% 3px, 6px 100%;
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            border: 2px solid var(--phosphor);
+            padding: 2px;
+            height: 90vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 0 15px var(--phosphor-dim) inset;
+        }
+
+        /* Header */
+        header {
+            background: var(--phosphor);
+            color: var(--bg);
+            text-align: center;
+            padding: 5px;
+            font-weight: bold;
+            font-size: 1.6rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* Main Display Area */
+        .screen {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+            position: relative;
+            background: rgba(0, 10, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Custom Scrollbar */
+        .screen::-webkit-scrollbar { width: 10px; }
+        .screen::-webkit-scrollbar-track { background: #000; border-left: 1px solid var(--phosphor-dim); }
+        .screen::-webkit-scrollbar-thumb { background: var(--phosphor); border: 1px solid #000; }
+
+        /* Controls */
+        .controls {
+            border-top: 2px solid var(--phosphor);
+            padding: 20px;
+            text-align: center;
+            background: rgba(0, 20, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        button {
+            background: #000;
+            color: var(--phosphor);
+            border: 2px solid var(--phosphor);
+            font-family: 'VT323', monospace;
+            font-size: 1.4rem;
+            padding: 10px 30px;
+            cursor: pointer;
+            text-transform: uppercase;
+            box-shadow: 0 0 5px var(--phosphor-dim);
+            transition: all 0.1s;
+        }
+
+        button:hover {
+            background: var(--phosphor);
+            color: #000;
+            box-shadow: 0 0 20px var(--phosphor);
+        }
+
+        button:active { transform: translateY(2px); }
+
+        /* Complication Button Style */
+        .btn-alert {
+            border-color: var(--alert);
+            color: var(--alert);
+            box-shadow: 0 0 5px var(--alert);
+        }
+        .btn-alert:hover {
+            background: var(--alert);
+            color: #000;
+            box-shadow: 0 0 20px var(--alert);
+        }
+
+        /* Briefing Elements */
+        .mission-header {
+            border-bottom: 2px dashed var(--phosphor);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+        }
+
+        .category-label {
+            font-size: 2.2rem;
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .sub-label {
+            font-size: 1.1rem;
+            opacity: 0.8;
+            font-family: monospace;
+        }
+
+        .briefing-text {
+            line-height: 1.5;
+            font-size: 1.4rem;
+            margin-bottom: 30px;
+            white-space: pre-wrap; /* Preserve formatting */
+        }
+
+        .tactical-advice {
+            border: 1px solid var(--amber);
+            color: var(--amber);
+            padding: 15px;
+            font-size: 1rem;
+            background: rgba(40, 30, 0, 0.25);
+            margin-top: auto;
+        }
+
+        /* Complication Alert Box */
+        .complication-box {
+            border: 2px solid var(--alert);
+            background: rgba(50, 0, 0, 0.2);
+            padding: 15px;
+            margin-top: 20px;
+            animation: flashBorder 2s infinite;
+            display: none; /* Hidden by default */
+        }
+
+        .comp-title {
+            color: var(--alert);
+            font-weight: bold;
+            font-size: 1.4rem;
+            border-bottom: 1px solid var(--alert);
+            margin-bottom: 10px;
+        }
+
+        .comp-rules {
+            font-size: 0.9rem;
+            color: #ffaaaa;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+
+        .comp-content {
+            font-size: 1.3rem;
+            color: #fff;
+        }
+
+        /* Typing cursor */
+        .cursor {
+            display: inline-block;
+            width: 12px;
+            height: 1.4rem;
+            background: var(--phosphor);
+            animation: blinker 1s step-end infinite;
+            vertical-align: text-bottom;
+        }
+
+        @keyframes blinker { 50% { opacity: 0; } }
+        @keyframes flashBorder { 
+            0% { box-shadow: 0 0 5px var(--alert) inset; } 
+            50% { box-shadow: 0 0 20px var(--alert) inset; } 
+            100% { box-shadow: 0 0 5px var(--alert) inset; } 
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        // GÖREV KONTROL // SENARYO ÜRETECİ v3.1
+    </header>
+
+    <div class="screen" id="screen">
+        <div style="margin-top: 40%; text-align: center;">
+            <p>> SİSTEM HAZIR.</p>
+            <p>> ŞİFRELEME ANAHTARI BEKLENİYOR...</p>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button onclick="generateMission()">[ GÖREV OLUŞTUR ]</button>
+        <button class="btn-alert" onclick="generateComplication()">[ ZORLUK ÜRET ]</button>
+    </div>
+</div>
+
+<script>
+    // --- DATA TABLES ---
+    
+    const categories = {
+        1: "İNTİKAM",
+        2: "BİR DÜNYAYI ARAŞTIR",
+        3: "BİR TUHAFLIĞI ARAŞTIR",
+        4: "BİR İSYANI BASTIR",
+        5: "ÖLDÜRME, YOK ETME VEYA KURTARMA BASKINI",
+        6: "ÖZEL OPERASYONLAR"
+    };
+
+    const scenarios = {
+        "İNTİKAM": {
+            1: "Küçük bir subayın infazı kaydedilmiş ve propaganda olarak yayılmış. İntikam gücü, failleri yer değiştiremeden önce ileri karakola kadar izini sürmüş. Ne pahasına olursa olsun düşman liderini öldürün.",
+            2: "Bir morlok enklavı yıllar önce bir eloi reaktörünü sabote etmiştir. Şimdi ise bakım tünelleri bulunmuş ve intikam zamanı gelmiştir.",
+            3: "Eski bir subay, ayrılıkçı oldu ve müstahkem bir sığınakta bulunmuştur. Saldıran taraf, savunmayı aşmalı ve hedefi ortadan kaldırmalıdır; savunmacı, kurtarma ekibi gelene kadar (6. Tur) direnmelidir.",
+            4: "Düşman, sizin koruduğunuz bir köyü yaktı. Köyü kurtaramazsınız, ancak düşmanın zaferinin tadını çıkarmamasını sağlayabilirsiniz. Haritadaki tüm düşman ikmal depolarını (3 işaret) yok edin.",
+            5: "Bir önceki çatışmada bir entomon sürüsü parçalandı. Hayatta kalan entomonidler, katillerin ikmal konvoyuna saldırdı.",
+            6: "Bir güneş imi tahrip edilmiş. Koruma gücü bunu kimin yaptığını umursamıyor, sadece geldiklerinde namlularına en yakındakini umursuyor."
+        },
+        "BİR DÜNYAYI ARAŞTIR": {
+            1: "Bir dünyada iç savaş çıkmıştır ve anarşi hâkimdir. Yerel hükümet, stratejik öneme sahip bölgeleri isyancılardan temizlemek için yardım istemiştir.",
+            2: "Bir ÖAŞ bir dünyaya inmiş ve bir yerleşim yerini ele geçirip köleleştirmiştir. Yerel hükümet, onları yok etmek için yardım istemiştir.",
+            3: "Bir dünyada halk ayaklanması tüm hükümet biçimlerini yok etmiş ve gezegeni kaosa sürüklemiştir. Yeni bir yönetim için yol açmak üzere başkanlık sarayını temizleyin ve güvenliğini sağlayın.",
+            4: "Uzun menzilli taramalar, olmaması gereken bir yerde nüfuslu bir dünya olduğunu göstermektedir. Yörünge yetkilileri fark etmeden bir iniş ekibi gönderilir.",
+            5: "Eski bir tahliye bölgesi yeniden işgal edilmiştir. Yeni sakinler silahlı, organize ve sorulara düşmanca davranmaktadır.",
+            6: "Bir yerleştirme deneyi tahminlerin ötesine geçmiştir. Artık, ekosistemin kendisi daha fazla müdahaleye direnmektedir."
+        },
+        "BİR TUHAFLIĞI ARAŞTIR": {
+            1: "Bir araştırma istasyonu rutin rapor sunma son tarihini geçmiştir ve bir birim araştırma için gönderilir.",
+            2: "Alçak yörüngede terk edilmiş bir gemi belirir ve yüzyıllar sonrasına ait bir imdat çağrısı yayınlar.",
+            3: "Eski bir makine yoktan enerji almaya başlar. Makineyi kapatmak, çevredeki altyapının çökmesine neden olabilir. Makineyi kapatın ve karşı çıkanları öldürün.",
+            4: "Bir oytu deseni, çatışma sırasında kendini yeniden yazmaya başlar. Eloi güçleri kontrol altına almaya çalışırken, diğerleri parçaları ele geçirmeye çalışır. Mahvolmadan önce oradan çıkın.",
+            5: "Bir zeno-arkeoloji araştırma istasyonu, çoktan yok olmuş bir medeniyetin kalıntılarını bildirir. Harabeleri araştırın ve araştırmacılar için güvenli olduklarından emin olun. Herhangi bir anormalliği ortadan kaldırın.",
+            6: "Bir toz fırtınası sırasında güneş işareti uyarı vermeden etkinleşir. İşaret stabilize olmadan veya patlamadan önce birçok grup bir araya gelmiştir."
+        },
+        "BİR İSYANI BASTIR": {
+            1: "Uzun süren iç savaş sona ermek üzeredir ve son isyancı üssü bulunmuş ve saldırılmıştır. İsyancılar ormandaki eski bir harabe binada mevzilenmiştir ve bu meseleyi ancak doğrudan bir saldırı sona erdirebilir.",
+            2: "Siyasi isyancılar, önemli bir sevkiyatın varışından saatler önce bir uzay limanını ele geçirmiştir. Bu kritik kargonun gecikmesi felaketle sonuçlanacak ve uzay limanını kontrol edemediğine dair herhangi bir işaret felaket olacaktır. Limanı geri alın.",
+            3: "Gezegenin hükümeti, zenoidlerin desteğiyle ayrılmaya ve bağımsız olmaya karar verir. Psişik güçlerin kullanımını ve vergi tahsilatını kontrol eden yasaları gevşeterek, önemli bir popülerlik kazanır. Dünya tamamen kaybedilmeden önce, senatoyu ele geçirmek ve isyancı politikacıları öldürmek veya yakalamak için bir GÖK birimi gönderilir.",
+            4: "Bir ÖAŞ, gezegen meclisine girmiş ve tüm milletvekillerini esir almıştır. Gezegen aynı zamanda bir GÖK'e de ev sahipliği yapmaktadır ve GÖK komutanı senato binasına saldırı emri vermiştir.",
+            5: "Hükümetin beklenmedik düşüşü, YSK komutanı ile gizlice zenoid yanlısı grupların desteklediği popüler liderler arasında bir iç savaş başlatmıştır. Ordu üsleri kontrol etmektedir, ancak isyancılar halkın desteğine sahiptir ve gıda ile su kaynaklarını kontrol etmektedir. Ordu, isyancıları ezmek için hayati üretim tesislerini güvence altına almalıdır.",
+            6: "Uzak bir araştırma istasyonunda halk ayaklanması, nüfusu ikiye bölmüştür. İşçiler mağdur hissetmektedir ve yönetimi devirip bir kooperatif kurmaya kararlıdırlar. Şu anda, her iki taraf da istasyonu destekleyen yerleşimlerin yarısını kontrol etmektedir, ancak kritik bir altyapı tesisindeki işçiler tarafsız kalmaktadır. Ya altyapı tesisini ele geçirip isyancıları dışarı atın ya da doğrudan saldırı ile onları ezip geçin."
+        },
+        "ÖLDÜRME, YOK ETME VEYA KURTARMA BASKINI": {
+            1: "Bir dünyanın, yıllardır yerel sistemi rahatsız eden haydut bir ÖAŞ'nin operasyon üssü olduğu tespit edilmiştir. ÖAŞ’nin karargahını, uzay gemilerini ve/veya iniş pistlerini yok etmek için bir kuvvet gönderilir.",
+            2: "Bir Prokurator, güneş sistemini istila etmeye çalışan bir uzaylı ırkının planını ortaya çıkarmıştır! Prokurator ve bir grup güneş jandarması, bu komployu başarıyla engellemiştir. Ancak, bu çabaları sırasında savcı ve güneş jandarması ekibi, çok gizli bilgilere erişmiştir. Savcı ve adamlarını öldürmek için bir kuvvet gönderilir.",
+            3: "Son derece önemli zeno-arkeolojik kalıntıları taşıyan bir uzay aracı, bir dünyaya düşmüştür. Yerel halkın yetkililerinin yanı sıra, kalıntıları ele geçirmek için iki grup daha olay yerine gelir.",
+            4: "Yıldız sistemi, iki ayrı gezegende iki rakip GÖK'e ev sahipliği yapmaktadır. Son gelişmeler, sistemdeki üçüncü ve ıssız bir gezegenin stratejik kaynaklar açısından zengin olduğunu ortaya çıkarmıştır. O zamandan beri, bu ıssız gezegende bir dizi çatışma patlak vermiştir. Araştırma istasyonunu ele geçirin ve hayati önem taşıyan araştırma belgelerini ve örnekleri toplayın.",
+            5: "Aşındırıcı bir atmosfere sahip gezegendeki zeno-arkeolojik kazı alanı saldırı altındadır. Zenoarkeologların çalıştığı ve yaşadığı yaşam destek konutları, kapalı kapılarla bölümlere ayrılmıştır ve oldukça büyüktür. Çoğu muhafız dışarıdayken düşman kuvvetleri iniş yapmıştır. Düşman kuvvetleri binaya girmeli, muhafızları yenmeli ve geri kalan muhafızlar geri dönene kadar konutları savunmaya hazırlanmalıdır.",
+            6: "İstihbarat, stratejik bir yerleşim yerine, birkaç dakika içinde tüm nüfusu yok edecek virüs başlıklı bir füzeyle terörist saldırısı düzenleneceğini gösteriyor. Teröristlerin çölün derinliklerindeki bir siloda saklandıkları tespit edildi. Küçük bir kuvvet, siloya sızarak teröristleri etkisiz hale getirmekle görevlendirilir."
+        },
+        "ÖZEL OPERASYONLAR": {
+            1: "Derindeki bir altyapı tesisinin içine gömülü gizli bir iletişim noktası, her şafak vakti şifreli sinyaller göndermeye başlamıştır. Küçük bir birim, bölgeye sızmak, bir bozucu patlayıcı yerleştirmek ve buranın otomatik nöbetçileri tamamen uyanmadan geri çekilmek üzere görevlendirilmiştir. İletişim noktasını devre dışı bırakın ve en az yarısı kadar gücü geri çekin.",
+            2: "Bir gezegen bakanlığı içindeki gizli bir muhbir, birçok dünya dışı tarafı ilgilendiren gizli bir denetim arşivine erişim sağlamıştır. İç güvenlik ekibi gelmeden önce arşiv ele geçirilmeli veya imha edilmelidir. Veri terminalini ele geçirin ve tahliye edin; arşiv silinirse veya saldırganlar yok edilirse savunmacılar kazanır.",
+            3: "Bir yıldız limanının mühürlü bir bölümünün, yaşanan psişik bir olayın ardından boş olduğu ilan edilmiştir, ancak enerji çekimi ve ısı izleri devam etmektedir. Birim, yaşam alanının gövdesine zarar vermeden bölmeyi taramak ve kalan varlıkları ortadan kaldırmakla görevlendirilir. Yapısal hasarı önlerken tüm temasları doğrulayın veya etkisiz hale getirin; aşırı ateş gücü otomatik kayıp riskine yol açar.",
+            4: "Devam eden bir isyanı destekleyen bir konvoy, hareketlerini koordine etmek için tek bir mobil komuta aracına güvenmektedir. Aracın, kısıtlı bir zaman aralığı için rotası bilinmektedir. Komuta aracı masa kenarından çıkmadan önce yok edin veya ele geçirin; savunmacılar aracı geciktirmeli veya tahliye etmelidir.",
+            5: "Onaylanmamış bir operasyonun ardından, sivil bir araştırma ekibi resmi raporla çelişen kayıtlara sahiptir. İnkâr edilebilir bir birim, kayıtları güvence altına almak ve tanıkların bölgeden ayrılmamasını sağlamak için gönderilir. Tüm kanıt işaretlerini kurtarın veya yok edin; sorgulama için adı geçen bir şahsı çıkarmak isteğe bağlı ikincil hedeftir.",
+            6: "Atıl olarak işaretlenmiş bir güneş geçidi bir süreliğine kısmi uyumlamaya girer. Küçük bir ekip, dengesiz açıklıktan içeri girmeli, diğer taraftaki işaret direklerini ele geçirmeli ve geçit dengesizleşmeden önce kapatma sinyali vermelidir. 4. turun sonunda her iki direği aynı anda kontrol edin; başarısızlık, felaketle sonuçlanacak bir kapanma riskine yol açar."
+        }
+    };
+
+    const complications = {
+        1: "RADYO PARAZİTİ\nEmirler çelişir, sinyaller gecikir veya otorite kısa süreliğine belirsiz hale gelir.\n>> Tüm figürler bu turda hareket etmek için önce moral sınamasından geçmelidir.",
+        2: "ÇEVRESEL DEĞİŞİM\nYerel koşullar beklenmedik bir şekilde kötüleşir: toz fırtınaları, güç dalgalanmaları, sarsıntılar, sel, mikro yerçekimi sapması.\n>> Tur sonuna kadar tüm açık alanları zorlu arazi olarak değerlendirin.",
+        3: "PSİKOLOJİK STRES\nKorku, şüphe, kan kokusu veya memetik baskı çatışmaya yayılır.\n>> Bu turdaki tüm moral sınamaları başarılı olursa yeniden atılmalıdır.",
+        4: "SİSTEM BOZULMASI\nSilahlar tıkanır, contalar yırtılır, güç hücreleri yanlış hizalanır.\n>> Bu olaydan sonra her figür ilk kez ateş ettiğinde veya göğüs göğse dövüşte saldırdığında, bir zar atın. 1 gelirse, eylem boşa gider (etkisi olmaz).",
+        5: "ATMOSFERİK KARGAŞA\nAni bir toz fırtınası, bir bacadan çıkan buhar veya asit yağmuru olsun, savaş alanı bulanıklaşır.\n>> Azami görüş mesafesi 30 cm ile sınırlıdır. Bu mesafenin ötesindeki hedeflere yapılan atışlar otomatik olarak ıskalanır.",
+        6: "ZAMANSAL BASKI\nBir şey gelmek, çökmek veya sona ermek üzeredir. Kurtarma pencereleri kapanır. Takviye kuvvetler yaklaşır. Yapılar dengesizleşir.\n>> Oyun planlanandan bir tur önce sona erecektir. Zaten son turdaysanız, bu durumun hiçbir etkisi olmaz."
+    };
+
+    // --- LOGIC ---
+    
+    function d6() { return Math.floor(Math.random() * 6) + 1; }
+
+    // Typewriter effect variables
+    let typeInterval;
+    let currentMissionHTML = ""; // To store the mission so we can re-render it if comp is clicked
+
+    function typeWriter(text, elementId, speed = 8) {
+        const element = document.getElementById(elementId);
+        element.innerHTML = "";
+        let i = 0;
+        clearInterval(typeInterval);
+
+        function type() {
+            if (i < text.length) {
+                if (text.charAt(i) === '<') {
+                    let tag = "";
+                    while(text.charAt(i) !== '>' && i < text.length) {
+                        tag += text.charAt(i);
+                        i++;
+                    }
+                    tag += '>';
+                    i++;
+                    element.innerHTML += tag;
+                } else if (text.charAt(i) === '\n') {
+                    element.innerHTML += '<br>';
+                    i++;
+                } else {
+                    element.innerHTML += text.charAt(i);
+                    i++;
+                }
+            } else {
+                clearInterval(typeInterval);
+                element.innerHTML += '<span class="cursor"></span>'; 
+            }
+        }
+        typeInterval = setInterval(type, speed);
+    }
+
+    function generateMission() {
+        const screen = document.getElementById('screen');
+        
+        const catRoll = d6();
+        const subRoll = d6();
+        const category = categories[catRoll];
+        const missionText = scenarios[category][subRoll];
+
+        screen.innerHTML = `
+            <div class="mission-header">
+                <span class="sub-label">KAT. ${catRoll}-${subRoll} // KOMUTA PROTOKOLLERİ ŞİFRESİ ÇÖZÜLÜYOR...</span><br>
+                <span class="category-label" style="color:${getColor(catRoll)}">${category}</span>
+            </div>
+            
+            <div style="margin-bottom:10px; color: var(--phosphor-dim); font-size:0.9em;">// BRİFİNG PAKETİ:</div>
+            <div id="briefing-content" class="briefing-text"></div>
+            
+            <div id="comp-slot" class="complication-box"></div>
+
+            <div class="tactical-advice">
+                <strong>// TAKTİKSEL PARAMETRELER (G.E. 421) //</strong><br>
+                Genel bir kural olarak, senaryoları oynarken hızlı tempolu bir oyun istiyorsanız:<br>
+                > Başarı için bir tur sınırı belirleyin.<br>
+                > Belirli bir turda takviye kuvvetlerin varışını önceden belirleyin.<br>
+                > Geç kalınacak bir tahliye turu belirleyin veya çevresel bir tırmanma unsuru belirleyin.<br>
+                > SINIR: Asla üçten fazla fiziksel hedef belirlemeyin.
+            </div>
+        `;
+
+        typeWriter(missionText, 'briefing-content', 8);
+    }
+
+    function generateComplication() {
+        // Check if mission exists first, if not, create placeholder structure
+        const compSlot = document.getElementById('comp-slot');
+        if (!compSlot) {
+            // User hasn't generated mission yet, so we just clear screen and show comp
+            const screen = document.getElementById('screen');
+            screen.innerHTML = `<div id="comp-slot" class="complication-box" style="display:block; margin-top:10%;"></div>`;
+        }
+        
+        const slot = document.getElementById('comp-slot');
+        slot.style.display = "block";
+        slot.scrollIntoView({ behavior: 'smooth' });
+
+        const rollVal = d6();
+        const eventText = complications[rollVal];
+
+        slot.innerHTML = `
+            <div class="comp-title">>> GELEN ZORLUK OLAYI (ZAR: ${rollVal}) <<</div>
+            <div class="comp-rules">
+                <strong>TETİKLEYİCİ:</strong> Her turun öncelik zarları toplamı ≥ 10 ise.<br>
+                <strong>KRİTİK:</strong> Toplam = 12 (⚅⚅) ise, bu olay oyun boyunca KALICI olur.
+            </div>
+            <div class="comp-content">
+                ${eventText.replace(/\n/g, '<br>')}
+            </div>
+        `;
+    }
+
+    function getColor(catRoll) {
+        if (catRoll === 4) return "var(--alert)"; 
+        if (catRoll === 5) return "var(--alert)"; 
+        if (catRoll === 6) return "var(--amber)"; 
+        return "var(--phosphor)";
+    }
+
+</script>
+</body>
+</html>
